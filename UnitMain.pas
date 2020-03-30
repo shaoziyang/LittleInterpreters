@@ -28,12 +28,12 @@ uses
   SynHighlighterPas,
   FastIniFile,
   BeRoScript,
-  uPSComponent;
+  uPSComponent, AppEvnts;
 
 type
   TFormMain = class(TForm)
     SynCppSyn: TSynCppSyn;
-    ImageList1: TImageList;
+    ilMain: TImageList;
     pmLittleC_HisFile: TPopupMenu;
     dlgOpenLittleC: TOpenDialog;
     dlgSaveLittleC: TSaveDialog;
@@ -87,6 +87,12 @@ type
     dlgSavePas: TSaveDialog;
     btnGithub: TSpeedButton;
     btnGitee: TSpeedButton;
+    Timer1: TTimer;
+    TrayIcon: TTrayIcon;
+    ilTrayIcon: TImageList;
+    pmTray: TPopupMenu;
+    pmTrayExit: TMenuItem;
+    ApplicationEvents: TApplicationEvents;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -111,6 +117,11 @@ type
     procedure PSScriptCompile(Sender: TPSScript);
     procedure btnGithubClick(Sender: TObject);
     procedure btnGiteeClick(Sender: TObject);
+    procedure pcMainChange(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure pmTrayExitClick(Sender: TObject);
+    procedure TrayIconClick(Sender: TObject);
+    procedure ApplicationEventsMinimize(Sender: TObject);
   private
     { Private declarations }
     ini_writeable: Boolean;
@@ -227,7 +238,7 @@ begin
   Application.ProcessMessages;
 end;
 
-procedure PSbeep(F,L:word);
+procedure PSbeep(F, L: word);
 begin
   Windows.Beep(F, L);
 end;
@@ -270,6 +281,11 @@ begin
   Script.AddString('native void beep(int F, int L);');
 end;
 {Little C script end}
+
+procedure TFormMain.ApplicationEventsMinimize(Sender: TObject);
+begin
+  Hide;
+end;
 
 procedure TFormMain.btnGiteeClick(Sender: TObject);
 begin
@@ -372,6 +388,17 @@ begin
   end;
 end;
 
+procedure TFormMain.pcMainChange(Sender: TObject);
+begin
+    TrayIcon.IconIndex := (pcMain.ActivePageIndex+1) mod  pcMain.PageCount;
+end;
+
+procedure TFormMain.pmTrayExitClick(Sender: TObject);
+begin
+  pmTray.Tag:=$E;
+  Close;
+end;
+
 procedure TFormMain.PSScriptCompile(Sender: TPSScript);
 begin
   Sender.AddFunction(@PSprint, 'procedure print(v:array of Variant);');
@@ -402,6 +429,12 @@ begin
   Pas_Compiled := False;
   btnPas_save.Enabled := True;
   btnPas_saveas.Enabled := True;
+end;
+
+procedure TFormMain.TrayIconClick(Sender: TObject);
+begin
+  Show;
+  Application.BringToFront;
 end;
 
 procedure TFormMain.btnLittleC_demosClick(Sender: TObject);
@@ -590,6 +623,13 @@ begin
   PSScript.Stop;
 end;
 
+procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose:= ( pmTray.Tag=$E);
+  if not CanClose then
+     Hide;
+end;
+
 procedure TFormMain.FormCreate(Sender: TObject);
 var
   i: Integer;
@@ -624,6 +664,7 @@ begin
 
     BoundsRect := ini.ReadRect('Last', 'pos', BoundsRect);
     pcMain.ActivePageIndex := ini.ReadInteger('Last', 'page', 0);
+    pcMainChange(nil);
 
     // C
     mmoOutC.Height := ini.ReadInteger('LittleC', 'Height', mmoOutC.Height);
