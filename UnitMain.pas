@@ -26,15 +26,17 @@ uses
   SynEditHighlighter,
   SynHighlighterCpp,
   SynHighlighterPas,
+  SynHighlighterVB,
   FastIniFile,
   BeRoScript,
   uPSComponent,
   Chip,
-  AppEvnts,
-  SynHighlighterVB;
+//  CalcUtils,
+  Calculator,
+  AppEvnts;
 
 const
-{$I app.cfg}  
+{$I app.cfg}
 
 type
   TFormMain = class(TForm)
@@ -95,7 +97,6 @@ type
     btnGitee: TSpeedButton;
     Timer: TTimer;
     TrayIcon: TTrayIcon;
-    ilTrayIcon: TImageList;
     pmTray: TPopupMenu;
     pmTrayExit: TMenuItem;
     ApplicationEvents: TApplicationEvents;
@@ -121,6 +122,17 @@ type
     dlgSaveBas: TSaveDialog;
     ilLogo: TImageList;
     btnBas_stop: TToolButton;
+    tsCalc: TTabSheet;
+    pcCalc: TPageControl;
+    tsCalcExpress: TTabSheet;
+    tsCalcGraph: TTabSheet;
+    mmoCalcVar: TMemo;
+    Panel2: TPanel;
+    cbbCalcExpress: TComboBox;
+    mmoCalcRes: TMemo;
+    Bevel1: TBevel;
+    Splitter4: TSplitter;
+    ilTrayIcon: TImageList;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -162,6 +174,8 @@ type
     procedure SynEditBasChange(Sender: TObject);
     procedure btnBas_stopClick(Sender: TObject);
     procedure btnBas_HelpClick(Sender: TObject);
+    procedure cbbCalcExpressDblClick(Sender: TObject);
+    procedure cbbCalcExpressKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
     ini_writeable: Boolean;
@@ -200,10 +214,12 @@ var
   Script: TBeRoScript;
   ini: TFastIniFile;
   bas: TBasic;
+  Calc: TCalculator;
 
 implementation
 
-uses UnitLittleDemos,UnitBasMan;
+uses UnitLittleDemos,
+  UnitBasMan;
 
 {$R *.dfm}
 
@@ -485,10 +501,10 @@ end;
 
 procedure TFormMain.mmoOutBasAdd(s: string);
 begin
-  mmoOutBas.Lines.BeginUpdate ;
+  mmoOutBas.Lines.BeginUpdate;
   mmoOutBas.Lines.Text := mmoOutBas.Lines.Text + s;
-   mmoOutBas.Lines.EndUpdate;
-   
+  mmoOutBas.Lines.EndUpdate;
+
   // scroll to last line
   mmoOutBas.SelStart := Length(mmoOutBas.Text);
   mmoOutBas.SelLength := mmoOutBas.SelStart;
@@ -593,7 +609,7 @@ end;
 
 procedure TFormMain.pcMainChange(Sender: TObject);
 begin
-  TrayIcon.IconIndex := (pcMain.ActivePageIndex + 1) mod pcMain.PageCount;
+  TrayIcon.IconIndex := pcMain.ActivePage.ImageIndex;
 end;
 
 procedure TFormMain.pmTrayExitClick(Sender: TObject);
@@ -843,6 +859,53 @@ begin
   PSScript.Stop;
 end;
 
+procedure TFormMain.cbbCalcExpressDblClick(Sender: TObject);
+var
+  s: string;
+  n: Integer;
+begin
+  try
+    try
+      if mmoCalcVar.Modified then
+      begin
+        mmoCalcVar.Modified:=False;
+          Calc.AddVariableList(mmoCalcVar.Lines);
+      end;
+      mmoCalcRes.Lines.Add(cbbCalcExpress.Text + ' =');
+      mmoCalcRes.Lines.Add(Calc.AsString(cbbCalcExpress.Text));
+      n := cbbCalcExpress.Items.IndexOf(cbbCalcExpress.Text);
+      if n = -1 then
+      begin
+        cbbCalcExpress.Items.Insert(0, cbbCalcExpress.Text);
+        if cbbCalcExpress.Items.Count > 8 then
+          cbbCalcExpress.Items.Delete(8);
+      end
+      else
+        cbbCalcExpress.Items.Move(n, 0);
+      cbbCalcExpress.SelectAll;
+    except
+      mmoCalcRes.Lines.Add('Error!');
+    end;
+  finally
+    mmoCalcRes.Lines.Add('');
+    if mmoCalcRes.Lines.Count > 4096 then
+    begin
+      mmoCalcRes.Lines.Delete(0);
+      mmoCalcRes.Lines.Delete(0);
+      mmoCalcRes.Lines.Delete(0);
+    end;
+  end;
+end;
+
+procedure TFormMain.cbbCalcExpressKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    cbbCalcExpressDblClick(Sender);
+  end;
+end;
+
 procedure TFormMain.chkOptTrayIconClick(Sender: TObject);
 begin
   TrayIcon.Visible := chkOptTrayIcon.Checked;
@@ -864,7 +927,7 @@ begin
   rs.Position := 0;
   reReadme.Lines.LoadFromStream(rs);
 
-  Version.Caption:=VER;
+  Version.Caption := VER;
 
   btnLittleC_newClick(Sender);
   btnLittleC_clearClick(Sender);
@@ -888,6 +951,9 @@ begin
   btnBas_newClick(Sender);
   btnBas_clearClick(Sender);
   Bas_Compiled := False;
+
+  Calc := TCalculator.Create(nil);
+  mmoCalcVar.Modified:=True;
 
   ini := TFastIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
   try
@@ -928,6 +994,15 @@ begin
 
     for i := 1 to ini.ReadInteger('BasHisFile', 'Count', 0) do
       Bas_addHis(ini.ReadString('BasHisFile', IntToStr(i), ''));
+
+    // Calc
+    for i := 1 to ini.ReadInteger('CalcExprHis', 'Count', 0) do
+      cbbCalcExpress.Items.Add(ini.ReadString('CalcExprHis', IntToStr(i), ''));
+    cbbCalcExpress.Text := ini.ReadString('CalcExprHis', 'text', '');
+    mmoCalcRes.Width:=ini.ReadInteger('CalcExpr','Width',mmoCalcRes.Width);
+    ini.ReadStrings('CalcExpr','vars',mmoCalcVar.Lines);
+    if mmoCalcVar.Text='' then
+       mmoCalcVar.Text:='x=1'#13#10'y=0x12';
   except
     ini_writeable := False;
   end;
@@ -975,11 +1050,21 @@ begin
       ini.WriteInteger('BasHisFile', 'Count', pmBas_HisFile.Items.Count);
       for i := 0 to pmBas_HisFile.Items.Count - 1 do
         ini.WriteString('BasHisFile', IntToStr(i + 1), pmBas_HisFile.Items[i].Caption);
+
+      // Calc
+      ini.EraseSection('CalcExprHis');
+      ini.WriteInteger('CalcExprHis', 'Count', cbbCalcExpress.Items.Count);
+      ini.WriteString('CalcExprHis', 'text', cbbCalcExpress.Text);
+      for i := 0 to cbbCalcExpress.Items.Count - 1 do
+        ini.WriteString('CalcExprHis', IntToStr(i + 1), cbbCalcExpress.Items[i]);
+      ini.WriteInteger('CalcExpr','Width',mmoCalcRes.Width);
+      ini.WriteStrings('CalcExpr','vars',mmoCalcVar.Lines);
     end;
   finally
     Script.Free;
     bas.Free;
     ini.Free;
+    Calc.Free;
   end;
 end;
 
