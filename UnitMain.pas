@@ -33,6 +33,9 @@ uses
   AppEvnts,
   SynHighlighterVB;
 
+const
+{$I app.cfg}  
+
 type
   TFormMain = class(TForm)
     SynCppSyn: TSynCppSyn;
@@ -854,6 +857,8 @@ begin
   rs := TResourceStream.Create(HInstance, 'README', 'RC_DATA');
   rs.Position := 0;
   reReadme.Lines.LoadFromStream(rs);
+
+  Version.Caption:=VER;
 
   btnLittleC_newClick(Sender);
   btnLittleC_clearClick(Sender);
