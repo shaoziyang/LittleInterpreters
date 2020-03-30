@@ -28,7 +28,8 @@ uses
   SynHighlighterPas,
   FastIniFile,
   BeRoScript,
-  uPSComponent, AppEvnts;
+  uPSComponent,
+  AppEvnts;
 
 type
   TFormMain = class(TForm)
@@ -93,6 +94,8 @@ type
     pmTray: TPopupMenu;
     pmTrayExit: TMenuItem;
     ApplicationEvents: TApplicationEvents;
+    tsBasic: TTabSheet;
+    chkOptTrayIcon: TCheckBox;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -122,6 +125,7 @@ type
     procedure pmTrayExitClick(Sender: TObject);
     procedure TrayIconClick(Sender: TObject);
     procedure ApplicationEventsMinimize(Sender: TObject);
+    procedure chkOptTrayIconClick(Sender: TObject);
   private
     { Private declarations }
     ini_writeable: Boolean;
@@ -390,12 +394,12 @@ end;
 
 procedure TFormMain.pcMainChange(Sender: TObject);
 begin
-    TrayIcon.IconIndex := (pcMain.ActivePageIndex+1) mod  pcMain.PageCount;
+  TrayIcon.IconIndex := (pcMain.ActivePageIndex + 1) mod pcMain.PageCount;
 end;
 
 procedure TFormMain.pmTrayExitClick(Sender: TObject);
 begin
-  pmTray.Tag:=$E;
+  pmTray.Tag := $E;
   Close;
 end;
 
@@ -623,11 +627,16 @@ begin
   PSScript.Stop;
 end;
 
+procedure TFormMain.chkOptTrayIconClick(Sender: TObject);
+begin
+  TrayIcon.Visible := chkOptTrayIcon.Checked;
+end;
+
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
-  CanClose:= ( pmTray.Tag=$E);
+  CanClose := (not TrayIcon.Visible) or (pmTray.Tag = $E);
   if not CanClose then
-     Hide;
+    Hide;
 end;
 
 procedure TFormMain.FormCreate(Sender: TObject);
@@ -666,6 +675,9 @@ begin
     pcMain.ActivePageIndex := ini.ReadInteger('Last', 'page', 0);
     pcMainChange(nil);
 
+    chkOptTrayIcon.Checked := ini.ReadBoolean('Option', 'Tray', True);
+    chkOptTrayIconClick(Sender);
+
     // C
     mmoOutC.Height := ini.ReadInteger('LittleC', 'Height', mmoOutC.Height);
     LittleC_EditorTempFileName := ChangeFileExt(Application.ExeName, '._c_');
@@ -698,6 +710,8 @@ begin
     begin
       ini.WriteRect('Last', 'pos', BoundsRect);
       ini.WriteInteger('Last', 'page', pcMain.ActivePageIndex);
+
+      ini.WriteBoolean('Option', 'Tray', chkOptTrayIcon.Checked);
 
       // Little C
       ini.WriteInteger('LittleC', 'Height', mmoOutC.Height);

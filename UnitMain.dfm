@@ -801,7 +801,7 @@ object FormMain: TFormMain
     Top = 0
     Width = 644
     Height = 383
-    ActivePage = tsLittleC
+    ActivePage = tsAbout
     Align = alClient
     Images = ilMain
     TabOrder = 0
@@ -1054,6 +1054,7 @@ object FormMain: TFormMain
           Top = 0
           Enabled = False
           ImageIndex = 34
+          Visible = False
         end
       end
       object SynEditPas: TSynEdit
@@ -1100,6 +1101,10 @@ object FormMain: TFormMain
         TabOrder = 2
         OnChange = mmoOutPasChange
       end
+    end
+    object tsBasic: TTabSheet
+      Caption = 'Basic'
+      ImageIndex = 37
     end
     object tsAbout: TTabSheet
       Caption = 'About'
@@ -1314,16 +1319,27 @@ object FormMain: TFormMain
             0505050505050505060202020202020202020202020202020202}
           OnClick = btnGiteeClick
         end
+        object chkOptTrayIcon: TCheckBox
+          Left = 8
+          Top = 160
+          Width = 97
+          Height = 17
+          Caption = 'TrayIcon'
+          Checked = True
+          State = cbChecked
+          TabOrder = 0
+          OnClick = chkOptTrayIconClick
+        end
       end
     end
   end
   object SynCppSyn: TSynCppSyn
-    Left = 24
-    Top = 240
+    Left = 416
+    Top = 296
   end
   object ilMain: TImageList
-    Left = 24
-    Top = 208
+    Left = 416
+    Top = 264
     Bitmap = {
       494C010127002C00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000040000000B0000000010020000000000000B0
@@ -2787,73 +2803,73 @@ object FormMain: TFormMain
   object pmLittleC_HisFile: TPopupMenu
     AutoHotkeys = maManual
     Images = ilMain
-    Left = 56
-    Top = 240
+    Left = 448
+    Top = 296
   end
   object dlgOpenLittleC: TOpenDialog
     DefaultExt = '.c'
     Filter = 'C files (*.c)|*.c'
-    Left = 88
-    Top = 240
+    Left = 480
+    Top = 296
   end
   object dlgSaveLittleC: TSaveDialog
     DefaultExt = '.c'
     Filter = 'C files (*.c)|*.c'
-    Left = 120
-    Top = 240
+    Left = 512
+    Top = 296
   end
   object XPManifest1: TXPManifest
-    Left = 56
-    Top = 208
+    Left = 448
+    Top = 264
   end
   object PSScript: TPSScript
     CompilerOptions = []
     OnCompile = PSScriptCompile
     Plugins = <>
     UsePreProcessor = False
-    Left = 152
-    Top = 272
+    Left = 544
+    Top = 328
   end
   object SynPasSyn: TSynPasSyn
-    Left = 24
-    Top = 272
+    Left = 416
+    Top = 328
   end
   object pmPas_HisFile: TPopupMenu
     AutoHotkeys = maManual
     Images = ilMain
-    Left = 56
-    Top = 272
+    Left = 448
+    Top = 328
   end
   object dlgOpenPas: TOpenDialog
     DefaultExt = '.pas'
     Filter = 'Pas files (*.pas)|*.pas|Pas files (*.pp)|*.pp'
     Options = [ofHideReadOnly, ofExtensionDifferent, ofEnableSizing]
-    Left = 88
-    Top = 272
+    Left = 480
+    Top = 328
   end
   object dlgSavePas: TSaveDialog
     DefaultExt = '.pas'
     Filter = 'Pas files (*.pas)|*.pas|Pas files (*.pp)|*.pp'
-    Left = 120
-    Top = 272
+    Left = 512
+    Top = 328
   end
   object Timer1: TTimer
-    Left = 120
-    Top = 208
+    Left = 512
+    Top = 264
   end
   object TrayIcon: TTrayIcon
     Icons = ilTrayIcon
     PopupMenu = pmTray
     Visible = True
     OnClick = TrayIconClick
-    Left = 88
-    Top = 208
+    Left = 480
+    Top = 264
   end
   object ilTrayIcon: TImageList
-    Left = 65528
-    Top = 208
+    Left = 384
+    Top = 264
     Bitmap = {
-      494C010105000900040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010105000900040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -3253,13 +3269,14 @@ object FormMain: TFormMain
       FFFFF0C700000000DFFBE1F7000000009FF9E1F3000000009319C1FF00000000
       303CC1FF000000003E7CC1FF000000003E7CC1FF000000003C0CC1FF00000000
       B88DC1F3000000009DF9E1F300000000FFFFE1F300000000FFFFF1E300000000
-      FFFFF0C300000000FFFFFC9380018001}
+      FFFFF0C300000000FFFFFC938001800100000000000000000000000000000000
+      000000000000}
   end
   object pmTray: TPopupMenu
     AutoHotkeys = maManual
     Images = ilMain
-    Left = 152
-    Top = 208
+    Left = 544
+    Top = 264
     object pmTrayExit: TMenuItem
       Caption = 'E&xit'
       ShortCut = 32856
@@ -3268,7 +3285,7 @@ object FormMain: TFormMain
   end
   object ApplicationEvents: TApplicationEvents
     OnMinimize = ApplicationEventsMinimize
-    Left = 184
-    Top = 208
+    Left = 576
+    Top = 264
   end
 end
