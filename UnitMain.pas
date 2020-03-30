@@ -17,9 +17,11 @@ uses
   StdCtrls,
   ImgList,
   Menus,
+  Buttons,
   Math,
   ExtCtrls,
   XPMan,
+  ShellAPI,
   SynEdit,
   SynEditHighlighter,
   SynHighlighterCpp,
@@ -83,6 +85,8 @@ type
     pmPas_HisFile: TPopupMenu;
     dlgOpenPas: TOpenDialog;
     dlgSavePas: TSaveDialog;
+    btnGithub: TSpeedButton;
+    btnGitee: TSpeedButton;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -105,6 +109,8 @@ type
     procedure btnPas_runClick(Sender: TObject);
     procedure btnPas_stopClick(Sender: TObject);
     procedure PSScriptCompile(Sender: TPSScript);
+    procedure btnGithubClick(Sender: TObject);
+    procedure btnGiteeClick(Sender: TObject);
   private
     { Private declarations }
     ini_writeable: Boolean;
@@ -264,6 +270,16 @@ begin
   Script.AddString('native void beep(int F, int L);');
 end;
 {Little C script end}
+
+procedure TFormMain.btnGiteeClick(Sender: TObject);
+begin
+  ShellExecute(Application.Handle, nil, 'https://gitee.com/shaoziyang/LittleInterpretors', nil, nil, SW_SHOWNORMAL);
+end;
+
+procedure TFormMain.btnGithubClick(Sender: TObject);
+begin
+  ShellExecute(Application.Handle, nil, 'https://github.com/shaoziyang/LittleInterpretors', nil, nil, SW_SHOWNORMAL);
+end;
 
 procedure TFormMain.btnLittleC_clearClick(Sender: TObject);
 begin
