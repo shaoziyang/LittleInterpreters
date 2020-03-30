@@ -29,7 +29,9 @@ uses
   FastIniFile,
   BeRoScript,
   uPSComponent,
-  AppEvnts;
+  Chip,
+  AppEvnts,
+  SynHighlighterVB;
 
 type
   TFormMain = class(TForm)
@@ -88,7 +90,7 @@ type
     dlgSavePas: TSaveDialog;
     btnGithub: TSpeedButton;
     btnGitee: TSpeedButton;
-    Timer1: TTimer;
+    Timer: TTimer;
     TrayIcon: TTrayIcon;
     ilTrayIcon: TImageList;
     pmTray: TPopupMenu;
@@ -96,6 +98,26 @@ type
     ApplicationEvents: TApplicationEvents;
     tsBasic: TTabSheet;
     chkOptTrayIcon: TCheckBox;
+    ToolBar3: TToolBar;
+    btnBas_clear: TToolButton;
+    ToolButton4: TToolButton;
+    btnBas_new: TToolButton;
+    btnBas_open: TToolButton;
+    btnBas_save: TToolButton;
+    btnBas_saveas: TToolButton;
+    ToolButton12: TToolButton;
+    btnBas_run: TToolButton;
+    ToolButton16: TToolButton;
+    btnBas_Help: TToolButton;
+    mmoOutBas: TMemo;
+    Splitter3: TSplitter;
+    SynEditBas: TSynEdit;
+    SynVBSyn: TSynVBSyn;
+    pmBas_HisFile: TPopupMenu;
+    dlgOpenBas: TOpenDialog;
+    dlgSaveBas: TSaveDialog;
+    ilLogo: TImageList;
+    btnBas_stop: TToolButton;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -126,6 +148,16 @@ type
     procedure TrayIconClick(Sender: TObject);
     procedure ApplicationEventsMinimize(Sender: TObject);
     procedure chkOptTrayIconClick(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
+    procedure btnBas_clearClick(Sender: TObject);
+    procedure btnBas_newClick(Sender: TObject);
+    procedure mmoOutBasChange(Sender: TObject);
+    procedure btnBas_openClick(Sender: TObject);
+    procedure btnBas_saveClick(Sender: TObject);
+    procedure btnBas_saveasClick(Sender: TObject);
+    procedure btnBas_runClick(Sender: TObject);
+    procedure SynEditBasChange(Sender: TObject);
+    procedure btnBas_stopClick(Sender: TObject);
   private
     { Private declarations }
     ini_writeable: Boolean;
@@ -133,6 +165,9 @@ type
     LittleC_Compiled: Boolean;
     Pas_EditorTempFileName: string;
     Pas_Compiled: Boolean;
+    Bas_EditorTempFileName: string;
+    Bas_Compiled: Boolean;
+
     procedure LittleC_Save(filename: string);
     procedure LittleC_Load(filename: string);
     procedure LittleC_addHis(filename: string);
@@ -142,16 +177,25 @@ type
     procedure Pas_Load(filename: string);
     procedure Pas_addHis(filename: string);
     procedure Pas_HisClick(Sender: TObject);
+
+    procedure Bas_Save(filename: string);
+    procedure Bas_Load(filename: string);
+    procedure Bas_addHis(filename: string);
+    procedure Bas_HisClick(Sender: TObject);
+
+    procedure BasPrint(sender: TObject; msg: string);
   public
     { Public declarations }
     procedure mmoOutCAdd(s: string);
     procedure mmoOutPasAdd(s: string);
+    procedure mmoOutBasAdd(s: string);
   end;
 
 var
   FormMain: TFormMain;
   Script: TBeRoScript;
   ini: TFastIniFile;
+  bas: TBasic;
 
 implementation
 
@@ -291,6 +335,130 @@ begin
   Hide;
 end;
 
+procedure TFormMain.BasPrint(sender: TObject; msg: string);
+begin
+  mmoOutBasAdd(msg);
+  Application.ProcessMessages;
+end;
+
+procedure TFormMain.Bas_addHis(filename: string);
+var
+  mi: TMenuItem;
+begin
+  if filename <> '' then
+  begin
+    if pmBas_HisFile.Items.Find(filename) = nil then
+    begin
+      if pmBas_HisFile.Items.Count > 8 then
+        pmBas_HisFile.Items.Delete(7);
+
+      mi := TMenuItem.Create(pmBas_HisFile);
+      mi.Caption := filename;
+      mi.OnClick := Bas_HisClick;
+      mi.ImageIndex := tsBasic.ImageIndex;
+      pmBas_HisFile.Items.Insert(0, mi);
+    end;
+  end;
+end;
+
+procedure TFormMain.Bas_HisClick(Sender: TObject);
+begin
+  Bas_Load(TMenuItem(Sender).Caption);
+  dlgSaveBas.FileName := dlgOpenBas.FileName;
+end;
+
+procedure TFormMain.Bas_Load(filename: string);
+begin
+  btnBas_newClick(nil);
+  synEditBas.Lines.LoadFromFile(filename);
+  tsBasic.Caption := 'Basic - ' + FileName;
+end;
+
+procedure TFormMain.Bas_Save(filename: string);
+begin
+  try
+    synEditBas.Lines.SaveToFile(filename);
+    synEditBas.Modified := False;
+    btnBas_save.Enabled := False;
+    btnBas_saveas.Enabled := False;
+  except
+
+  end;
+end;
+
+procedure TFormMain.btnBas_clearClick(Sender: TObject);
+begin
+  mmoOutBas.Clear;
+end;
+
+procedure TFormMain.btnBas_newClick(Sender: TObject);
+begin
+  if Sender <> nil then
+    SynEditBas.Text := NewBasFileTemplate;
+  SynEditBas.Modified := False;
+  btnBas_save.Enabled := False;
+  btnBas_saveas.Enabled := False;
+  tsBasic.Caption := 'Basic';
+  dlgSaveBas.FileName := '';
+end;
+
+procedure TFormMain.btnBas_openClick(Sender: TObject);
+begin
+  if dlgOpenBas.Execute then
+  begin
+    Bas_Load(dlgOpenBas.FileName);
+    Bas_addHis(dlgOpenBas.FileName);
+    dlgSaveBas.FileName := dlgOpenBas.FileName;
+  end;
+end;
+
+procedure TFormMain.btnBas_runClick(Sender: TObject);
+begin
+  btnBas_stop.Enabled := True;
+  btnBas_run.Enabled := False;
+  try
+    try
+      bas.Run('new');
+      bas.Run(SynEditBas.Text + #13#10 + 'run');
+    except on E: Exception do
+      begin
+        mmoOutBas.Lines.add(E.Message);
+      end;
+    end;
+  finally
+    btnBas_stop.Enabled := False;
+    btnBas_run.Enabled := True;
+  end;
+end;
+
+procedure TFormMain.btnBas_saveasClick(Sender: TObject);
+begin
+  if dlgSaveBas.Execute then
+  begin
+    Bas_Save(dlgSaveBas.FileName);
+    tsBasic.Caption := 'Basic - ' + dlgSaveBas.FileName;
+  end;
+end;
+
+procedure TFormMain.btnBas_saveClick(Sender: TObject);
+begin
+  if dlgSaveBas.FileName = '' then
+  begin
+    if not dlgSaveBas.Execute then
+      Exit;
+    tsBasic.Caption := 'Basic - ' + dlgSaveBas.FileName;
+    Bas_addHis(dlgSaveBas.FileName);
+  end;
+  Bas_Save(dlgSaveBas.FileName);
+end;
+
+procedure TFormMain.btnBas_stopClick(Sender: TObject);
+begin
+  btnBas_stop.Enabled := False;
+  btnBas_run.Enabled := True;
+  bas.SetBreak
+end;
+
 procedure TFormMain.btnGiteeClick(Sender: TObject);
 begin
   ShellExecute(Application.Handle, nil, 'https://gitee.com/shaoziyang/LittleInterpretors', nil, nil, SW_SHOWNORMAL);
@@ -304,6 +472,29 @@ end;
 procedure TFormMain.btnLittleC_clearClick(Sender: TObject);
 begin
   mmoOutC.Clear;
+end;
+
+procedure TFormMain.mmoOutBasAdd(s: string);
+begin
+  mmoOutBas.Lines.BeginUpdate ;
+  mmoOutBas.Lines.Text := mmoOutBas.Lines.Text + s;
+   mmoOutBas.Lines.EndUpdate;
+   
+  // scroll to last line
+  mmoOutBas.SelStart := Length(mmoOutBas.Text);
+  mmoOutBas.SelLength := mmoOutBas.SelStart;
+
+end;
+
+procedure TFormMain.mmoOutBasChange(Sender: TObject);
+var
+  I: Integer;
+begin
+  if mmoOutBas.Lines.Count > 10000 then
+  begin
+    for I := 0 to 1000 do
+      mmoOutBas.Lines.Delete(0);
+  end;
 end;
 
 procedure TFormMain.mmoOutCAdd(s: string);
@@ -349,7 +540,6 @@ end;
 procedure TFormMain.Pas_addHis(filename: string);
 var
   mi: TMenuItem;
-  i: integer;
 begin
   if filename <> '' then
   begin
@@ -421,6 +611,13 @@ begin
   Sender.AddFunction(@PSsleep, 'procedure sleep(x:integer);');
 end;
 
+procedure TFormMain.SynEditBasChange(Sender: TObject);
+begin
+  Bas_Compiled := False;
+  btnBas_save.Enabled := True;
+  btnBas_saveas.Enabled := True;
+end;
+
 procedure TFormMain.synEditCChange(Sender: TObject);
 begin
   LittleC_Compiled := False;
@@ -433,6 +630,16 @@ begin
   Pas_Compiled := False;
   btnPas_save.Enabled := True;
   btnPas_saveas.Enabled := True;
+end;
+
+procedure TFormMain.TimerTimer(Sender: TObject);
+begin
+  if pcMain.ActivePage = tsAbout then
+  begin
+    ilLogo.Tag := (ilLogo.Tag + 1) mod ilLogo.Count;
+    ProgramIcon.Picture.Bitmap := nil;
+    ilLogo.GetBitmap(ilLogo.Tag, ProgramIcon.Picture.Bitmap);
+  end;
 end;
 
 procedure TFormMain.TrayIconClick(Sender: TObject);
@@ -503,7 +710,7 @@ begin
   if dlgSaveLittleC.Execute then
   begin
     LittleC_Save(dlgSaveLittleC.FileName);
-    tsLittleC.Caption := 'Little C - ' + dlgOpenLittleC.FileName;
+    tsLittleC.Caption := 'Little C - ' + dlgSaveLittleC.FileName;
   end;
 end;
 
@@ -513,7 +720,7 @@ begin
   begin
     if not dlgSaveLittleC.Execute then
       Exit;
-    tsLittleC.Caption := 'Little C - ' + dlgOpenLittleC.FileName;
+    tsLittleC.Caption := 'Little C - ' + dlgSaveLittleC.FileName;
     LittleC_addHis(dlgSaveLittleC.FileName);
   end;
   LittleC_Save(dlgSaveLittleC.FileName);
@@ -604,7 +811,7 @@ begin
   if dlgSavePas.Execute then
   begin
     Pas_Save(dlgSavePas.FileName);
-    tsPascal.Caption := 'Pascal - ' + dlgOpenPas.FileName;
+    tsPascal.Caption := 'Pascal - ' + dlgSavePas.FileName;
   end;
 end;
 
@@ -665,6 +872,12 @@ begin
   btnPas_clearClick(Sender);
   Pas_Compiled := False;
 
+  bas := TBasic.Create;
+  bas.OnPrint := BasPrint;
+  btnBas_newClick(Sender);
+  btnBas_clearClick(Sender);
+  Bas_Compiled := False;
+
   ini := TFastIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
   try
     ini.WriteInteger('Run', 'Count', ini.ReadInteger('Run', 'Count', 0) + 1);
@@ -695,6 +908,15 @@ begin
 
     for i := 1 to ini.ReadInteger('PasHisFile', 'Count', 0) do
       Pas_addHis(ini.ReadString('PasHisFile', IntToStr(i), ''));
+
+    // Bas
+    mmoOutBas.Height := ini.ReadInteger('Basic', 'Height', mmoOutBas.Height);
+    Bas_EditorTempFileName := ChangeFileExt(Application.ExeName, '._b_');
+    if FileExists(Bas_EditorTempFileName) then
+      synEditBas.Lines.LoadFromFile(Bas_EditorTempFileName);
+
+    for i := 1 to ini.ReadInteger('BasHisFile', 'Count', 0) do
+      Bas_addHis(ini.ReadString('BasHisFile', IntToStr(i), ''));
   except
     ini_writeable := False;
   end;
@@ -732,9 +954,20 @@ begin
       ini.WriteInteger('PasHisFile', 'Count', pmPas_HisFile.Items.Count);
       for i := 0 to pmPas_HisFile.Items.Count - 1 do
         ini.WriteString('PasHisFile', IntToStr(i + 1), pmPas_HisFile.Items[i].Caption);
+
+      // Bas
+      ini.WriteInteger('Basic', 'Height', mmoOutBas.Height);
+
+      synEditBas.Lines.SaveToFile(Bas_EditorTempFileName);
+
+      ini.EraseSection('BasHisFile');
+      ini.WriteInteger('BasHisFile', 'Count', pmBas_HisFile.Items.Count);
+      for i := 0 to pmBas_HisFile.Items.Count - 1 do
+        ini.WriteString('BasHisFile', IntToStr(i + 1), pmBas_HisFile.Items[i].Caption);
     end;
   finally
     Script.Free;
+    bas.Free;
     ini.Free;
   end;
 end;
