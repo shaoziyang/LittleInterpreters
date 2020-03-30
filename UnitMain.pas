@@ -161,6 +161,7 @@ type
     procedure btnBas_runClick(Sender: TObject);
     procedure SynEditBasChange(Sender: TObject);
     procedure btnBas_stopClick(Sender: TObject);
+    procedure btnBas_HelpClick(Sender: TObject);
   private
     { Private declarations }
     ini_writeable: Boolean;
@@ -202,7 +203,7 @@ var
 
 implementation
 
-uses UnitLittleDemos;
+uses UnitLittleDemos,UnitBasMan;
 
 {$R *.dfm}
 
@@ -392,6 +393,11 @@ end;
 procedure TFormMain.btnBas_clearClick(Sender: TObject);
 begin
   mmoOutBas.Clear;
+end;
+
+procedure TFormMain.btnBas_HelpClick(Sender: TObject);
+begin
+  FormBasicManual.Show;
 end;
 
 procedure TFormMain.btnBas_newClick(Sender: TObject);

@@ -1197,6 +1197,7 @@ object FormMain: TFormMain
           Left = 202
           Top = 0
           ImageIndex = 28
+          OnClick = btnBas_HelpClick
         end
       end
       object mmoOutBas: TMemo
