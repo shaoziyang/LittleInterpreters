@@ -31,9 +31,11 @@ uses
   BeRoScript,
   uPSComponent,
   Chip,
-//  CalcUtils,
   Calculator,
-  AppEvnts;
+  FastList,
+  Graph,
+  AppEvnts,
+  Grids;
 
 const
 {$I app.cfg}
@@ -126,13 +128,80 @@ type
     pcCalc: TPageControl;
     tsCalcExpress: TTabSheet;
     tsCalcGraph: TTabSheet;
-    mmoCalcVar: TMemo;
     Panel2: TPanel;
     cbbCalcExpress: TComboBox;
     mmoCalcRes: TMemo;
     Bevel1: TBevel;
     Splitter4: TSplitter;
-    ilTrayIcon: TImageList;
+    Panel110: TPanel;
+    Splitter: TSplitter;
+    gFormula: TStringGrid;
+    cbFormula: TComboBox;
+    tbQuality: TTrackBar;
+    LBox: TScrollBox;
+    LPanel: TPanel;
+    eHSpacing: TEdit;
+    eVSpacing: TEdit;
+    eTransparency: TEdit;
+    udTransparency: TUpDown;
+    cbLayout: TComboBox;
+    eMargin: TEdit;
+    udMargin: TUpDown;
+    eMinZoom: TEdit;
+    eMaxZoom: TEdit;
+    eZoomInFactor: TEdit;
+    eZoomOutFactor: TEdit;
+    eCenterX: TEdit;
+    eCenterY: TEdit;
+    eMaxX: TEdit;
+    eMaxY: TEdit;
+    pcCalcGraph: TPageControl;
+    tsGraph: TTabSheet;
+    tsReport: TTabSheet;
+    ilCalcGraph: TImageList;
+    CD: TColorDialog;
+    ToolBarCalcGraph: TToolBar;
+    btnCalcGraphGrid: TToolButton;
+    btnCalcGraphAxis: TToolButton;
+    btnCalcGraphTracing: TToolButton;
+    btnCalcGraphLineAntialias: TToolButton;
+    btnCalcGraphOverlaps: TToolButton;
+    btnCalcGraphExtreme: TToolButton;
+    btnCalcGraphLineMulticolor: TToolButton;
+    btnCalcGraphAutoquality: TToolButton;
+    btnCalcGraphCopyImage: TToolButton;
+    btnCalcGraphColor: TToolButton;
+    btnCalcGraphSign: TToolButton;
+    btnCalcGraphRectCoord: TToolButton;
+    btnCalcGraphPolarCoord: TToolButton;
+    btnCalcGraphDrawFormula: TSpeedButton;
+    btnCalcGraphClear: TSpeedButton;
+    label100: TLabel;
+    grpGraphLine: TGroupBox;
+    lable101: TLabel;
+    label102: TLabel;
+    grpZoom: TGroupBox;
+    lable103: TLabel;
+    label104: TLabel;
+    label105: TLabel;
+    label106: TLabel;
+    grpCoordSize: TGroupBox;
+    label107: TLabel;
+    label108: TLabel;
+    grpCoordCenter: TGroupBox;
+    label109: TLabel;
+    label110: TLabel;
+    grpSign: TGroupBox;
+    label111: TLabel;
+    label112: TLabel;
+    label113: TLabel;
+    toolbutton100: TToolButton;
+    toolbutton101: TToolButton;
+    Panel100: TPanel;
+    Panel101: TPanel;
+    pnlCalcVar: TPanel;
+    Label2: TLabel;
+    mmoCalcVar: TMemo;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -176,8 +245,15 @@ type
     procedure btnBas_HelpClick(Sender: TObject);
     procedure cbbCalcExpressDblClick(Sender: TObject);
     procedure cbbCalcExpressKeyPress(Sender: TObject; var Key: Char);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnCalcGraphGridClick(Sender: TObject);
+    procedure btnCalcGraphAxisClick(Sender: TObject);
   private
     { Private declarations }
+    FUpdateCount: Integer;
+    FTraceList: TFastList;
+    FGraph: TGraph;
+
     ini_writeable: Boolean;
     LittleC_EditorTempFileName: string;
     LittleC_Compiled: Boolean;
@@ -207,6 +283,7 @@ type
     procedure mmoOutCAdd(s: string);
     procedure mmoOutPasAdd(s: string);
     procedure mmoOutBasAdd(s: string);
+    property Graph: TGraph read FGraph write FGraph;
   end;
 
 var
@@ -482,6 +559,18 @@ begin
   btnBas_stop.Enabled := False;
   btnBas_run.Enabled := True;
   bas.SetBreak
+end;
+
+procedure TFormMain.btnCalcGraphAxisClick(Sender: TObject);
+begin
+  FGraph.ShowAxis := btnCalcGraphAxis.Down;
+  FGraph.Invalidate;
+end;
+
+procedure TFormMain.btnCalcGraphGridClick(Sender: TObject);
+begin
+  FGraph.ShowGrid := btnCalcGraphGrid.Down;
+  FGraph.Invalidate;
 end;
 
 procedure TFormMain.btnGiteeClick(Sender: TObject);
@@ -861,18 +950,20 @@ end;
 
 procedure TFormMain.cbbCalcExpressDblClick(Sender: TObject);
 var
-  s: string;
   n: Integer;
+  res:string;
 begin
   try
     try
       if mmoCalcVar.Modified then
       begin
-        mmoCalcVar.Modified:=False;
-          Calc.AddVariableList(mmoCalcVar.Lines);
+        mmoCalcVar.Modified := False;
+        Calc.Clear;
+        Calc.AddVariableList(mmoCalcVar.Lines);
       end;
+      res:=Calc.AsString(cbbCalcExpress.Text);
       mmoCalcRes.Lines.Add(cbbCalcExpress.Text + ' =');
-      mmoCalcRes.Lines.Add(Calc.AsString(cbbCalcExpress.Text));
+      mmoCalcRes.Lines.Add(res);
       n := cbbCalcExpress.Items.IndexOf(cbbCalcExpress.Text);
       if n = -1 then
       begin
@@ -884,7 +975,7 @@ begin
         cbbCalcExpress.Items.Move(n, 0);
       cbbCalcExpress.SelectAll;
     except
-      mmoCalcRes.Lines.Add('Error!');
+      mmoCalcRes.Lines.Add('<'+cbbCalcExpress.Text + '> Error!');
     end;
   finally
     mmoCalcRes.Lines.Add('');
@@ -911,6 +1002,11 @@ begin
   TrayIcon.Visible := chkOptTrayIcon.Checked;
 end;
 
+procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  FGraph.ForceStop;
+end;
+
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CanClose := (not TrayIcon.Visible) or (pmTray.Tag = $E);
@@ -923,6 +1019,8 @@ var
   i: Integer;
   rs: TResourceStream;
 begin
+  tsCalcGraph.TabVisible:=False;
+
   rs := TResourceStream.Create(HInstance, 'README', 'RC_DATA');
   rs.Position := 0;
   reReadme.Lines.LoadFromStream(rs);
@@ -953,7 +1051,21 @@ begin
   Bas_Compiled := False;
 
   Calc := TCalculator.Create(nil);
-  mmoCalcVar.Modified:=True;
+  mmoCalcVar.Modified := True;
+
+  try
+    FTraceList := TFastList.Create;
+    FTraceList.IndexTypes := [ttNameValue, ttName];
+    FGraph := TGraph.Create(Self);
+//  FGraph.OnMouseMove := MouseMove;
+//  FGraph.OnOffsetChange := OffsetChange;
+//  FGraph.OnTraceDone := TraceDone;
+//  FGraph.OnRectangularTrace := RectangularTrace;
+//  FGraph.OnPolarTrace := PolarTrace;
+    FGraph.Parent := tsGraph;
+    FGraph.Align := alClient;
+  except on E: Exception do
+  end;
 
   ini := TFastIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
   try
@@ -999,10 +1111,10 @@ begin
     for i := 1 to ini.ReadInteger('CalcExprHis', 'Count', 0) do
       cbbCalcExpress.Items.Add(ini.ReadString('CalcExprHis', IntToStr(i), ''));
     cbbCalcExpress.Text := ini.ReadString('CalcExprHis', 'text', '');
-    mmoCalcRes.Width:=ini.ReadInteger('CalcExpr','Width',mmoCalcRes.Width);
-    ini.ReadStrings('CalcExpr','vars',mmoCalcVar.Lines);
-    if mmoCalcVar.Text='' then
-       mmoCalcVar.Text:='x=1'#13#10'y=0x12';
+    pnlCalcVar.Width := ini.ReadInteger('CalcExpr', 'Width', mmoCalcRes.Width);
+    ini.ReadStrings('CalcExpr', 'vars', mmoCalcVar.Lines);
+    if mmoCalcVar.Text = '' then
+      mmoCalcVar.Text := 'x=10'#13#10'y=0x12#13#10f=x+y';
   except
     ini_writeable := False;
   end;
@@ -1057,14 +1169,16 @@ begin
       ini.WriteString('CalcExprHis', 'text', cbbCalcExpress.Text);
       for i := 0 to cbbCalcExpress.Items.Count - 1 do
         ini.WriteString('CalcExprHis', IntToStr(i + 1), cbbCalcExpress.Items[i]);
-      ini.WriteInteger('CalcExpr','Width',mmoCalcRes.Width);
-      ini.WriteStrings('CalcExpr','vars',mmoCalcVar.Lines);
+      ini.WriteInteger('CalcExpr', 'Width', pnlCalcVar.Width);
+      ini.WriteStrings('CalcExpr', 'vars', mmoCalcVar.Lines);
     end;
   finally
     Script.Free;
     bas.Free;
     ini.Free;
     Calc.Free;
+    FTraceList.Free;
+    FGraph.Free;
   end;
 end;
 
@@ -1096,7 +1210,6 @@ end;
 procedure TFormMain.LittleC_addHis(filename: string);
 var
   mi: TMenuItem;
-  i: integer;
 begin
   if filename <> '' then
   begin
