@@ -790,11 +790,13 @@ object FormMain: TFormMain
     000000000000FFFF0000DFFB0000F33F00008DF1000083110000100800001028
     00001828000014380000140800001008000010C800009FB90000F8CF00009FF9
     0000FFFF0000}
+  KeyPreview = True
   OldCreateOrder = False
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 16
   object pcMain: TPageControl
@@ -802,16 +804,14 @@ object FormMain: TFormMain
     Top = 0
     Width = 819
     Height = 361
-    ActivePage = tsAbout
+    ActivePage = tsLittleC
     Align = alClient
     Images = ilMain
     TabOrder = 0
     OnChange = pcMainChange
-    ExplicitHeight = 508
     object tsLittleC: TTabSheet
       Caption = 'Little C'
       ImageIndex = 35
-      ExplicitHeight = 477
       object Splitter1: TSplitter
         Left = 0
         Top = 238
@@ -838,7 +838,6 @@ object FormMain: TFormMain
         ScrollBars = ssVertical
         TabOrder = 0
         OnChange = mmoOutCChange
-        ExplicitTop = 388
       end
       object ToolBar1: TToolBar
         Left = 0
@@ -960,13 +959,11 @@ object FormMain: TFormMain
           'C')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = synEditCChange
-        ExplicitHeight = 363
       end
     end
     object tsPascal: TTabSheet
       Caption = 'Pascal'
       ImageIndex = 36
-      ExplicitHeight = 477
       object Splitter2: TSplitter
         Left = 0
         Top = 238
@@ -1090,7 +1087,6 @@ object FormMain: TFormMain
           'Pascal')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = SynEditPasChange
-        ExplicitHeight = 363
       end
       object mmoOutPas: TMemo
         Left = 0
@@ -1108,13 +1104,11 @@ object FormMain: TFormMain
         ScrollBars = ssVertical
         TabOrder = 2
         OnChange = mmoOutPasChange
-        ExplicitTop = 388
       end
     end
     object tsBasic: TTabSheet
       Caption = 'Basic'
       ImageIndex = 37
-      ExplicitHeight = 477
       object Splitter3: TSplitter
         Left = 0
         Top = 238
@@ -1227,7 +1221,6 @@ object FormMain: TFormMain
         ScrollBars = ssVertical
         TabOrder = 1
         OnChange = mmoOutBasChange
-        ExplicitTop = 388
       end
       object SynEditBas: TSynEdit
         Left = 0
@@ -1255,13 +1248,11 @@ object FormMain: TFormMain
           'Basic')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = SynEditBasChange
-        ExplicitHeight = 363
       end
     end
     object tsCalc: TTabSheet
       Caption = 'Calc'
       ImageIndex = 38
-      ExplicitHeight = 477
       object pcCalc: TPageControl
         Left = 0
         Top = 0
@@ -1270,10 +1261,8 @@ object FormMain: TFormMain
         ActivePage = tsCalcExpress
         Align = alClient
         TabOrder = 0
-        ExplicitHeight = 477
         object tsCalcExpress: TTabSheet
           Caption = 'express'
-          ExplicitHeight = 446
           object Splitter4: TSplitter
             Left = 213
             Top = 0
@@ -1290,7 +1279,6 @@ object FormMain: TFormMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitHeight = 446
             object Bevel1: TBevel
               Left = 0
               Top = 272
@@ -1315,7 +1303,6 @@ object FormMain: TFormMain
               Text = '1 + 2'
               OnDblClick = cbbCalcExpressDblClick
               OnKeyPress = cbbCalcExpressKeyPress
-              ExplicitTop = 422
             end
             object mmoCalcRes: TMemo
               Left = 0
@@ -1326,7 +1313,6 @@ object FormMain: TFormMain
               ReadOnly = True
               ScrollBars = ssVertical
               TabOrder = 1
-              ExplicitHeight = 419
             end
           end
           object pnlCalcVar: TPanel
@@ -1337,7 +1323,6 @@ object FormMain: TFormMain
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitHeight = 446
             object Label2: TLabel
               Left = 0
               Top = 0
@@ -1359,14 +1344,12 @@ object FormMain: TFormMain
               ScrollBars = ssBoth
               TabOrder = 0
               WordWrap = False
-              ExplicitHeight = 430
             end
           end
         end
         object tsCalcGraph: TTabSheet
           Caption = 'Graph'
           ImageIndex = 1
-          ExplicitHeight = 446
           object Panel110: TPanel
             Left = 0
             Top = 0
@@ -2100,7 +2083,6 @@ object FormMain: TFormMain
     object tsAbout: TTabSheet
       Caption = 'About'
       ImageIndex = 40
-      ExplicitHeight = 477
       object reReadme: TRichEdit
         Left = 217
         Top = 0
@@ -2120,7 +2102,6 @@ object FormMain: TFormMain
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
-        ExplicitHeight = 477
       end
       object Panel1: TPanel
         Left = 0
@@ -2131,7 +2112,6 @@ object FormMain: TFormMain
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 1
-        ExplicitHeight = 477
         object ProgramIcon: TImage
           Left = 8
           Top = 40

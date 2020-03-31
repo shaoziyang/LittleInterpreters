@@ -257,6 +257,7 @@ type
     procedure btnCalcGraphAxisClick(Sender: TObject);
     procedure btnOptFontClick(Sender: TObject);
     procedure btnOptDefaultFontClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     FUpdateCount: Integer;
@@ -867,6 +868,7 @@ begin
   Font.Name := 'Courier New';
   Font.Size := 10;
   ini.WriteFont('Option', 'Font', Font);
+  dlgFont.Font:=Font;
   showFont;
 end;
 
@@ -1114,9 +1116,9 @@ begin
 
     chkOptTrayIcon.Checked := ini.ReadBoolean('Option', 'Tray', True);
     chkOptTrayIconClick(Sender);
-    pnlFont.Font := ini.ReadFont('Option', 'Font', Font);
-    Font.Name := pnlFont.Font.Name;
-    Font.Size := Min(Max(pnlFont.Font.Size, 7), 18);
+    dlgFont.Font := ini.ReadFont('Option', 'Font', Font);
+    Font.Name := dlgFont.Font.Name;
+    Font.Size := Min(Max(dlgFont.Font.Size, 7), 18);
     pnlFont.Font := Font;
     showFont;
 
@@ -1219,6 +1221,19 @@ begin
     Calc.Free;
     FTraceList.Free;
     FGraph.Free;
+  end;
+end;
+
+procedure TFormMain.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key=VK_F9 then
+  begin
+    case pcMain.ActivePageIndex of
+      0:btnLittleC_runClick(Sender);
+      1:btnPas_runClick(Sender);
+      2:btnBas_runClick(Sender);
+    end;
   end;
 end;
 
