@@ -14,7 +14,7 @@ UNIT BeRoScript;
 
 INTERFACE
 
-USES Windows,BeRoStream;
+USES Windows,Dialogs,BeRoStream;
 
 CONST BeRoScriptArchive='BeRoScriptArchive';
       BeRoScriptBuild=1;
@@ -4113,25 +4113,36 @@ BEGIN
 END;
 
 FUNCTION RTL_READFLOAT:SINGLE; PASCAL;
+var
+s:string;
+C:INTEGER;
 BEGIN
- READ(RESULT);
+  s:=InputBox('Input a float number', 'number', '');
+  VAL(S,RESULT,C);
 END;
 
 FUNCTION RTL_READINT:LONGINT; PASCAL;
 BEGIN
- READ(RESULT);
+// READ(RESULT);
+RESULT:=StrToInt(InputBox('Input a integer', 'number', ''));
 END;
 
 FUNCTION RTL_READUINT:LONGWORD; PASCAL;
+var
+s:string;
+C:INTEGER;
 BEGIN
- READ(RESULT);
+// READ(RESULT);
+  s:=InputBox('Input a unsigned integer', 'number', '');
+  VAL(S,RESULT,C);
 END;
 
 FUNCTION RTL_READSTRING:POINTER; PASCAL;
 VAR S:STRING;
     L:LONGWORD;
 BEGIN
- READ(S);
+// READ(S);
+ s:=InputBox('input','','');
  L:=LENGTH(S);
  RESULT:=NIL;
  RTL_STRING_SETLENGTH(RESULT,L);
@@ -4139,13 +4150,19 @@ BEGIN
 END;
 
 FUNCTION RTL_READCHAR:CHAR; PASCAL;
+var s:string;
 BEGIN
- READ(RESULT);
+// READ(RESULT);
+  s:=InputBox('Input a char', '', '');
+  if s<>'' then
+    RESULT:=s[1]
+  else
+    RESULT:=' ';
 END;
 
-PROCEDURE RTL_READLN; PASCAL;
+function RTL_READLN:string; PASCAL;
 BEGIN
- READLN;
+// READLN;
 END;
 
 PROCEDURE RTL_FLUSHIN; PASCAL;
@@ -14435,7 +14452,7 @@ BEGIN
  AddNativeProc('readuint',@RTL_READUINT);
  AddNativeProc('readstring',@RTL_READSTRING);
  AddNativeProc('readchar',@RTL_READCHAR);
- AddNativeProc('readln',@RTL_READLN);
+ AddNativeProc('readln',@RTL_READSTRING);
  AddNativeProc('flushin',@RTL_FLUSHIN);
  AddNativeProc('flush',@RTL_FLUSH);
  AddNativeProc('flushout',@RTL_FLUSHOUT);
@@ -14498,7 +14515,7 @@ BEGIN
  AddString('native unsigned int readuint();');
  AddString('native string readstring();');
  AddString('native unsigned char readchar();');
- AddString('native void readln();');
+ AddString('native string readln();');
  AddString('native void flushin();');
  AddString('native void flush();');
  AddString('native void flushout();');
