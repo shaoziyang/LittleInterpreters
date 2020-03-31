@@ -35,7 +35,8 @@ uses
   FastList,
   Graph,
   AppEvnts,
-  Grids;
+  Grids,
+  SynHighlighterJScript;
 
 const
 {$I app.cfg}
@@ -103,7 +104,6 @@ type
     pmTrayExit: TMenuItem;
     ApplicationEvents: TApplicationEvents;
     tsBasic: TTabSheet;
-    chkOptTrayIcon: TCheckBox;
     ToolBar3: TToolBar;
     btnBas_clear: TToolButton;
     ToolButton4: TToolButton;
@@ -202,6 +202,13 @@ type
     pnlCalcVar: TPanel;
     Label2: TLabel;
     mmoCalcVar: TMemo;
+    SynJScriptSyn: TSynJScriptSyn;
+    dlgFont: TFontDialog;
+    grpOption: TGroupBox;
+    chkOptTrayIcon: TCheckBox;
+    pnlFont: TPanel;
+    btnOptFont: TBitBtn;
+    btnOptDefaultFont: TBitBtn;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -248,6 +255,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnCalcGraphGridClick(Sender: TObject);
     procedure btnCalcGraphAxisClick(Sender: TObject);
+    procedure btnOptFontClick(Sender: TObject);
+    procedure btnOptDefaultFontClick(Sender: TObject);
   private
     { Private declarations }
     FUpdateCount: Integer;
@@ -283,6 +292,7 @@ type
     procedure mmoOutCAdd(s: string);
     procedure mmoOutPasAdd(s: string);
     procedure mmoOutBasAdd(s: string);
+    procedure showFont;
     property Graph: TGraph read FGraph write FGraph;
   end;
 
@@ -725,6 +735,11 @@ begin
   Sender.AddFunction(@PSsleep, 'procedure sleep(x:integer);');
 end;
 
+procedure TFormMain.showFont;
+begin
+  pnlFont.Caption := Font.Name + ', ' + IntToStr(Font.Size);
+end;
+
 procedure TFormMain.SynEditBasChange(Sender: TObject);
 begin
   Bas_Compiled := False;
@@ -847,6 +862,25 @@ begin
   btnLittleC_stop.Enabled := False;
 end;
 
+procedure TFormMain.btnOptDefaultFontClick(Sender: TObject);
+begin
+  Font.Name := 'Courier New';
+  Font.Size := 10;
+  ini.WriteFont('Option', 'Font', Font);
+  showFont;
+end;
+
+procedure TFormMain.btnOptFontClick(Sender: TObject);
+begin
+  if dlgFont.Execute then
+  begin
+    Font.Name := dlgFont.Font.Name;
+    Font.Size := dlgFont.Font.Size;
+    ini.WriteFont('Option', 'Font', Font);
+    showFont;
+  end;
+end;
+
 procedure TFormMain.btnPas_clearClick(Sender: TObject);
 begin
   mmoOutPas.Clear;
@@ -951,7 +985,7 @@ end;
 procedure TFormMain.cbbCalcExpressDblClick(Sender: TObject);
 var
   n: Integer;
-  res:string;
+  res: string;
 begin
   try
     try
@@ -961,7 +995,7 @@ begin
         Calc.Clear;
         Calc.AddVariableList(mmoCalcVar.Lines);
       end;
-      res:=Calc.AsString(cbbCalcExpress.Text);
+      res := Calc.AsString(cbbCalcExpress.Text);
       mmoCalcRes.Lines.Add(cbbCalcExpress.Text + ' =');
       mmoCalcRes.Lines.Add(res);
       n := cbbCalcExpress.Items.IndexOf(cbbCalcExpress.Text);
@@ -975,7 +1009,7 @@ begin
         cbbCalcExpress.Items.Move(n, 0);
       cbbCalcExpress.SelectAll;
     except
-      mmoCalcRes.Lines.Add('<'+cbbCalcExpress.Text + '> Error!');
+      mmoCalcRes.Lines.Add('Expression <' + cbbCalcExpress.Text + '> Error!');
     end;
   finally
     mmoCalcRes.Lines.Add('');
@@ -1018,8 +1052,9 @@ procedure TFormMain.FormCreate(Sender: TObject);
 var
   i: Integer;
   rs: TResourceStream;
+  Compatibility: longword;
 begin
-  tsCalcGraph.TabVisible:=False;
+  tsCalcGraph.TabVisible := False;
 
   rs := TResourceStream.Create(HInstance, 'README', 'RC_DATA');
   rs.Position := 0;
@@ -1079,6 +1114,11 @@ begin
 
     chkOptTrayIcon.Checked := ini.ReadBoolean('Option', 'Tray', True);
     chkOptTrayIconClick(Sender);
+    pnlFont.Font := ini.ReadFont('Option', 'Font', Font);
+    Font.Name := pnlFont.Font.Name;
+    Font.Size := Min(Max(pnlFont.Font.Size, 7), 18);
+    pnlFont.Font := Font;
+    showFont;
 
     // C
     mmoOutC.Height := ini.ReadInteger('LittleC', 'Height', mmoOutC.Height);

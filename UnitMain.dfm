@@ -2,10 +2,10 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Little Interpretors v1.0'
-  ClientHeight = 508
+  ClientHeight = 361
   ClientWidth = 819
   Color = clBtnFace
-  Constraints.MinHeight = 300
+  Constraints.MinHeight = 400
   Constraints.MinWidth = 560
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -801,18 +801,20 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 819
-    Height = 508
-    ActivePage = tsCalc
+    Height = 361
+    ActivePage = tsAbout
     Align = alClient
     Images = ilMain
     TabOrder = 0
     OnChange = pcMainChange
+    ExplicitHeight = 508
     object tsLittleC: TTabSheet
       Caption = 'Little C'
       ImageIndex = 35
+      ExplicitHeight = 477
       object Splitter1: TSplitter
         Left = 0
-        Top = 385
+        Top = 238
         Width = 811
         Height = 3
         Cursor = crVSplit
@@ -822,7 +824,7 @@ object FormMain: TFormMain
       end
       object mmoOutC: TMemo
         Left = 0
-        Top = 388
+        Top = 241
         Width = 811
         Height = 89
         Align = alBottom
@@ -836,6 +838,7 @@ object FormMain: TFormMain
         ScrollBars = ssVertical
         TabOrder = 0
         OnChange = mmoOutCChange
+        ExplicitTop = 388
       end
       object ToolBar1: TToolBar
         Left = 0
@@ -935,7 +938,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 22
         Width = 811
-        Height = 363
+        Height = 216
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -957,14 +960,16 @@ object FormMain: TFormMain
           'C')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = synEditCChange
+        ExplicitHeight = 363
       end
     end
     object tsPascal: TTabSheet
       Caption = 'Pascal'
       ImageIndex = 36
+      ExplicitHeight = 477
       object Splitter2: TSplitter
         Left = 0
-        Top = 385
+        Top = 238
         Width = 811
         Height = 3
         Cursor = crVSplit
@@ -1063,7 +1068,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 22
         Width = 811
-        Height = 363
+        Height = 216
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1085,10 +1090,11 @@ object FormMain: TFormMain
           'Pascal')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = SynEditPasChange
+        ExplicitHeight = 363
       end
       object mmoOutPas: TMemo
         Left = 0
-        Top = 388
+        Top = 241
         Width = 811
         Height = 89
         Align = alBottom
@@ -1102,14 +1108,16 @@ object FormMain: TFormMain
         ScrollBars = ssVertical
         TabOrder = 2
         OnChange = mmoOutPasChange
+        ExplicitTop = 388
       end
     end
     object tsBasic: TTabSheet
       Caption = 'Basic'
       ImageIndex = 37
+      ExplicitHeight = 477
       object Splitter3: TSplitter
         Left = 0
-        Top = 385
+        Top = 238
         Width = 811
         Height = 3
         Cursor = crVSplit
@@ -1205,7 +1213,7 @@ object FormMain: TFormMain
       end
       object mmoOutBas: TMemo
         Left = 0
-        Top = 388
+        Top = 241
         Width = 811
         Height = 89
         Align = alBottom
@@ -1219,12 +1227,13 @@ object FormMain: TFormMain
         ScrollBars = ssVertical
         TabOrder = 1
         OnChange = mmoOutBasChange
+        ExplicitTop = 388
       end
       object SynEditBas: TSynEdit
         Left = 0
         Top = 22
         Width = 811
-        Height = 363
+        Height = 216
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1246,41 +1255,45 @@ object FormMain: TFormMain
           'Basic')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = SynEditBasChange
+        ExplicitHeight = 363
       end
     end
     object tsCalc: TTabSheet
       Caption = 'Calc'
       ImageIndex = 38
+      ExplicitHeight = 477
       object pcCalc: TPageControl
         Left = 0
         Top = 0
         Width = 811
-        Height = 477
+        Height = 330
         ActivePage = tsCalcExpress
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 477
         object tsCalcExpress: TTabSheet
           Caption = 'express'
+          ExplicitHeight = 446
           object Splitter4: TSplitter
             Left = 213
             Top = 0
-            Height = 446
+            Height = 299
             ExplicitLeft = 320
             ExplicitTop = -3
+            ExplicitHeight = 446
           end
           object Panel2: TPanel
             Left = 216
             Top = 0
             Width = 587
-            Height = 446
+            Height = 299
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitLeft = 116
-            ExplicitWidth = 687
+            ExplicitHeight = 446
             object Bevel1: TBevel
               Left = 0
-              Top = 419
+              Top = 272
               Width = 587
               Height = 3
               Align = alBottom
@@ -1290,7 +1303,7 @@ object FormMain: TFormMain
             end
             object cbbCalcExpress: TComboBox
               Left = 0
-              Top = 422
+              Top = 275
               Width = 587
               Height = 24
               Align = alBottom
@@ -1302,29 +1315,29 @@ object FormMain: TFormMain
               Text = '1 + 2'
               OnDblClick = cbbCalcExpressDblClick
               OnKeyPress = cbbCalcExpressKeyPress
-              ExplicitWidth = 687
+              ExplicitTop = 422
             end
             object mmoCalcRes: TMemo
               Left = 0
               Top = 0
               Width = 587
-              Height = 419
+              Height = 272
               Align = alClient
               ReadOnly = True
               ScrollBars = ssVertical
               TabOrder = 1
-              ExplicitWidth = 687
+              ExplicitHeight = 419
             end
           end
           object pnlCalcVar: TPanel
             Left = 0
             Top = 0
             Width = 213
-            Height = 446
+            Height = 299
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 116
+            ExplicitHeight = 446
             object Label2: TLabel
               Left = 0
               Top = 0
@@ -1338,21 +1351,22 @@ object FormMain: TFormMain
               Left = 0
               Top = 16
               Width = 213
-              Height = 430
+              Height = 283
               Align = alClient
               Lines.Strings = (
                 'x=10'
                 'y=0x12')
+              ScrollBars = ssBoth
               TabOrder = 0
-              ExplicitTop = 0
-              ExplicitWidth = 113
-              ExplicitHeight = 446
+              WordWrap = False
+              ExplicitHeight = 430
             end
           end
         end
         object tsCalcGraph: TTabSheet
           Caption = 'Graph'
           ImageIndex = 1
+          ExplicitHeight = 446
           object Panel110: TPanel
             Left = 0
             Top = 0
@@ -2086,11 +2100,12 @@ object FormMain: TFormMain
     object tsAbout: TTabSheet
       Caption = 'About'
       ImageIndex = 40
+      ExplicitHeight = 477
       object reReadme: TRichEdit
         Left = 217
         Top = 0
         Width = 594
-        Height = 477
+        Height = 330
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -2105,16 +2120,18 @@ object FormMain: TFormMain
         ReadOnly = True
         ScrollBars = ssVertical
         TabOrder = 0
+        ExplicitHeight = 477
       end
       object Panel1: TPanel
         Left = 0
         Top = 0
         Width = 217
-        Height = 477
+        Height = 330
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
         TabOrder = 1
+        ExplicitHeight = 477
         object ProgramIcon: TImage
           Left = 8
           Top = 40
@@ -2296,16 +2313,138 @@ object FormMain: TFormMain
             0505050505050505060202020202020202020202020202020202}
           OnClick = btnGiteeClick
         end
-        object chkOptTrayIcon: TCheckBox
+        object grpOption: TGroupBox
           Left = 8
-          Top = 160
-          Width = 97
-          Height = 17
-          Caption = 'Tray Icon'
-          Checked = True
-          State = cbChecked
+          Top = 130
+          Width = 198
+          Height = 191
+          Caption = 'Option'
           TabOrder = 0
-          OnClick = chkOptTrayIconClick
+          object chkOptTrayIcon: TCheckBox
+            Left = 16
+            Top = 128
+            Width = 97
+            Height = 17
+            Caption = 'Tray Icon'
+            Checked = True
+            State = cbChecked
+            TabOrder = 0
+            OnClick = chkOptTrayIconClick
+          end
+          object pnlFont: TPanel
+            Left = 16
+            Top = 72
+            Width = 161
+            Height = 41
+            BevelInner = bvRaised
+            BevelOuter = bvLowered
+            Caption = 'pnlFont'#13#10'12'
+            TabOrder = 1
+          end
+          object btnOptFont: TBitBtn
+            Left = 16
+            Top = 31
+            Width = 114
+            Height = 25
+            Caption = 'Font'
+            TabOrder = 2
+            OnClick = btnOptFontClick
+            Glyph.Data = {
+              36040000424D3604000000000000360000002800000010000000100000000100
+              2000000000000004000064000000640000000000000000000000FFFFFFFF858A
+              88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A
+              88FF858A88FF858A88FF858A88FF858A88FF858A88FFFFFFFFFF858A88FFFFFF
+              FEFFFCFCFCFFFCFCFCFFFCFCFCFFFCFCFCFFFCFCFCFFFCFCFCFFFAFAFAFFFAFA
+              FAFFFAFAFAFFF6F6F6FFF6F6F6FFF6F6F6FFEFEFEFFF858A88FF858A88FFFFFF
+              FEFFEAEAEBFFF2F2F2FFF4F4F4FFF6F6F6FFF8F8F8FF555555FF2D2D2DFF2121
+              21FF030303FF000000FF4C4C4CFFF7F7F7FFEFEFEFFF858A88FF858A88FFFFFF
+              FEFFEBEBEAFFF2F2F2FFF4F4F4FFF6F6F6FFF7F7F7FF494949FF000000FF7878
+              78FFF7F7F7FF5E5E5EFF000000FFADADADFFEFEFEFFF858A88FF858A88FFFFFF
+              FEFFEBEBEBFFF1F1F1FFF3F3F3FFF4F4F4FFF6F6F6FF484848FF050505FFF1F1
+              F1FFFBFBFBFFD3D3D3FF000000FF757575FFEFEFEFFF858A88FF858A88FFFFFF
+              FEFFEAEBEAFFF0F0F0FFF2F2F2FFF3F3F3FFF5F5F5FF484848FF040404FFF3F3
+              F3FFF9F9F9FFDBDBDBFF000000FF7B7B7BFFEFEFEFFF858A88FF858A88FFFFFF
+              FEFFE9E9EAFFEFEFEFFFF0F0F0FFF2F2F2FFF3F3F3FF474747FF000000FF7575
+              75FFF2F2F2FF656565FF000000FFB1B1B1FFEFEFEFFF858A88FF858A88FFFFFF
+              FEFFE8E8E8FFEDEDEDFFEFEFEFFFF0F0F0FFF1F1F1FF474747FF1F1F1FFF3333
+              33FF000000FF000000FF616161FFF2F2F2FFF6F6F6FF858A88FF858A88FFFFFF
+              FEFFE6E6E6FFECECECFFEDEDEDFFEEEEEEFFEFEFEFFF464646FF2B2B2BFFF0F0
+              F0FFEFEFEFFFEEEEEEFFEBECECFFEAE9E9FFF8F8F8FF858A88FF858A88FFFFFF
+              FEFFE4E4E4FF2E2E2EFF2E2E2EFF2E2E2EFFB8B9B8FF4A4A4AFF2E2E2EFFECED
+              ECFFECEBECFFEBEBEAFFE9E9E9FFE6E7E7FFFBFBFBFF858A88FF858A88FFFFFF
+              FEFFE3E3E3FF2E2E2EFFD3D3D3FFBFBFBFFF2E2E2EFFE9E9E9FFE9E9E9FFE9E9
+              EAFFE9E9E8FFE7E7E8FFE6E6E6FFE4E5E4FFFBFBFBFF858A88FF858A88FFFFFF
+              FEFFE3E3E3FFB1B1B1FF2E2E2EFF737373FF2E2E2EFFE6E6E6FFE6E7E6FFE6E6
+              E6FFE5E6E5FFE5E4E4FFE4E3E4FFE3E3E3FFFDFDFDFF858A88FF858A88FFFFFF
+              FEFFE3E3E3FFE2E2E2FFDBDBDBFFCECECEFF2E2E2EFFE3E3E3FFE8E8E8FFE9E9
+              E9FFE8E8E8FFE8E8E8FFE3E3E3FFE3E3E3FFFDFDFDFF858A88FF858A88FFFFFF
+              FEFFE3E3E3FFA7A7A7FF828282FF2E2E2EFF2E2E2EFFE3E3E3FFE6E6E6FFE6E6
+              E6FFE6E6E6FFE6E6E6FFE3E3E3FFE3E3E3FFFDFDFDFF858A88FF858A88FFFFFF
+              FEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFF
+              FEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFFFFFFFEFF858A88FFFFFFFFFF858A
+              88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A88FF858A
+              88FF858A88FF858A88FF858A88FF858A88FF858A88FFFFFFFFFF}
+          end
+          object btnOptDefaultFont: TBitBtn
+            Left = 149
+            Top = 31
+            Width = 28
+            Height = 25
+            TabOrder = 3
+            OnClick = btnOptDefaultFontClick
+            Glyph.Data = {
+              36060000424D3606000000000000360400002800000020000000100000000100
+              08000000000000020000940E0000940E00000001000000000000000000003300
+              00006600000099000000CC000000FF0000000033000033330000663300009933
+              0000CC330000FF33000000660000336600006666000099660000CC660000FF66
+              000000990000339900006699000099990000CC990000FF99000000CC000033CC
+              000066CC000099CC0000CCCC0000FFCC000000FF000033FF000066FF000099FF
+              0000CCFF0000FFFF000000003300330033006600330099003300CC003300FF00
+              330000333300333333006633330099333300CC333300FF333300006633003366
+              33006666330099663300CC663300FF6633000099330033993300669933009999
+              3300CC993300FF99330000CC330033CC330066CC330099CC3300CCCC3300FFCC
+              330000FF330033FF330066FF330099FF3300CCFF3300FFFF3300000066003300
+              66006600660099006600CC006600FF0066000033660033336600663366009933
+              6600CC336600FF33660000666600336666006666660099666600CC666600FF66
+              660000996600339966006699660099996600CC996600FF99660000CC660033CC
+              660066CC660099CC6600CCCC6600FFCC660000FF660033FF660066FF660099FF
+              6600CCFF6600FFFF660000009900330099006600990099009900CC009900FF00
+              990000339900333399006633990099339900CC339900FF339900006699003366
+              99006666990099669900CC669900FF6699000099990033999900669999009999
+              9900CC999900FF99990000CC990033CC990066CC990099CC9900CCCC9900FFCC
+              990000FF990033FF990066FF990099FF9900CCFF9900FFFF99000000CC003300
+              CC006600CC009900CC00CC00CC00FF00CC000033CC003333CC006633CC009933
+              CC00CC33CC00FF33CC000066CC003366CC006666CC009966CC00CC66CC00FF66
+              CC000099CC003399CC006699CC009999CC00CC99CC00FF99CC0000CCCC0033CC
+              CC0066CCCC0099CCCC00CCCCCC00FFCCCC0000FFCC0033FFCC0066FFCC0099FF
+              CC00CCFFCC00FFFFCC000000FF003300FF006600FF009900FF00CC00FF00FF00
+              FF000033FF003333FF006633FF009933FF00CC33FF00FF33FF000066FF003366
+              FF006666FF009966FF00CC66FF00FF66FF000099FF003399FF006699FF009999
+              FF00CC99FF00FF99FF0000CCFF0033CCFF0066CCFF0099CCFF00CCCCFF00FFCC
+              FF0000FFFF0033FFFF0066FFFF0099FFFF00CCFFFF00FFFFFF00000080000080
+              000000808000800000008000800080800000C0C0C00080808000191919004C4C
+              4C00B2B2B200E5E5E5005A1E1E00783C3C0096646400C8969600FFC8C800465F
+              82005591B9006EB9D7008CD2E600B4E6F000D8E9EC0099A8AC00646F7100E2EF
+              F100C56A31000000000000000000000000000000000000000000000000000000
+              0000000000000000000000000000000000000000000000000000EEEEEEEEEEEE
+              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE090909095EEE
+              EEEEEE090909090909AC81818181ACEEEEEEEE818181818181ACAC5E105EEEEE
+              EEEEEEEE10101034ACEEACAC81ACEEEEEEEEEEEE81818181ACEEEEE31034EEEE
+              EEEEEEEE101010ADEEEEEEE38181EEEEEEEEEEEE818181ACEEEEEEEE5E103434
+              34343433101058EEEEEEEEEEAC81818181818181818181EEEEEEEEEEE310095E
+              5E5E34101010ADEEEEEEEEEEE38181ACACAC81818181ACEEEEEEEEEEEE5E10AC
+              EEEE34101058EEEEEEEEEEEEEEAC81ACEEEE81818181EEEEEEEEEEEEEEE31034
+              EEAC101010ADEEEEEEEEEEEEEEE38181EEAC818181ACEEEEEEEEEEEEEEEE5E10
+              AC34101058EEEEEEEEEEEEEEEEEEAC81AC81818181EEEEEEEEEEEEEEEEEEE310
+              33101710ADEEEEEEEEEEEEEEEEEEE38181818181ACEEEEEEEEEEEEEEEEEEEE5E
+              1717175EEEEEEEEEEEEEEEEEEEEEEEAC818181ACEEEEEEEEEEEEEEEEEEEEEEAD
+              103B10ADEEEEEEEEEEEEEEEEEEEEEEAC818181ACEEEEEEEEEEEEEEEEEEEEEEEE
+              583B5EEEEEEEEEEEEEEEEEEEEEEEEEEE8181ACEEEEEEEEEEEEEEEEEEEEEEEEEE
+              AD5EADEEEEEEEEEEEEEEEEEEEEEEEEEEACACACEEEEEEEEEEEEEEEEEEEEEEEEEE
+              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE}
+            NumGlyphs = 2
+          end
         end
       end
     end
@@ -26877,6 +27016,22 @@ object FormMain: TFormMain
   end
   object CD: TColorDialog
     Left = 320
+    Top = 248
+  end
+  object SynJScriptSyn: TSynJScriptSyn
+    Left = 416
+    Top = 376
+  end
+  object dlgFont: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    MinFontSize = 6
+    MaxFontSize = 18
+    Options = [fdEffects, fdLimitSize]
+    Left = 608
     Top = 248
   end
 end
