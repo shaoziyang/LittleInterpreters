@@ -10,7 +10,7 @@
 	</PersonalityInfo>
 	<Delphi.Personality>
 		<Source>
-			<Source Name="MainSource">LittleInterpretor.dpr</Source>
+			<Source Name="MainSource">LittleInterpreter.dpr</Source>
 		</Source>
 		<FileVersion>
 			<FileVersion Name="Version">7.0</FileVersion>
@@ -123,7 +123,7 @@
 			<Directories Name="UnitOutputDir"></Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
 			<Directories Name="PackageDCPOutputDir"></Directories>
-			<Directories Name="SearchPath"></Directories>
+			<Directories Name="SearchPath">.\mp</Directories>
 			<Directories Name="Packages">vcl;rtl;vclx;dbrtl;vcldb;adortl;dbxcds;dbexpress;xmlrtl;vclie;inet;inetdbbde;inetdbxpress;VclSmp;dsnap;bdertl;teeui;teedb;tee;vcldbx;vclactnband;acnt2006_R;RaizeComponentsVcl;FlatStyle;SynEdit_R2006</Directories>
 			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs"></Directories>

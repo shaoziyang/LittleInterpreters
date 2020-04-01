@@ -1,4 +1,4 @@
-program LittleInterpretor;
+program LittleInterpreter;
 
 {$R 'li.res' 'li.rc'}
 

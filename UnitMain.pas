@@ -35,8 +35,7 @@ uses
   FastList,
   Graph,
   AppEvnts,
-  Grids,
-  SynHighlighterJScript;
+  Grids;
 
 const
 {$I app.cfg}
@@ -202,7 +201,6 @@ type
     pnlCalcVar: TPanel;
     Label2: TLabel;
     mmoCalcVar: TMemo;
-    SynJScriptSyn: TSynJScriptSyn;
     dlgFont: TFontDialog;
     grpOption: TGroupBox;
     chkOptTrayIcon: TCheckBox;

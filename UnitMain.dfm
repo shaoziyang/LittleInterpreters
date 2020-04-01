@@ -1,8 +1,8 @@
 object FormMain: TFormMain
   Left = 0
   Top = 0
-  Caption = 'Little Interpretors v1.0'
-  ClientHeight = 361
+  Caption = 'Little Interpreters v1.0'
+  ClientHeight = 422
   ClientWidth = 819
   Color = clBtnFace
   Constraints.MinHeight = 400
@@ -803,8 +803,8 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 819
-    Height = 361
-    ActivePage = tsLittleC
+    Height = 422
+    ActivePage = tsPascal
     Align = alClient
     Images = ilMain
     TabOrder = 0
@@ -814,7 +814,7 @@ object FormMain: TFormMain
       ImageIndex = 35
       object Splitter1: TSplitter
         Left = 0
-        Top = 238
+        Top = 299
         Width = 811
         Height = 3
         Cursor = crVSplit
@@ -824,7 +824,7 @@ object FormMain: TFormMain
       end
       object mmoOutC: TMemo
         Left = 0
-        Top = 241
+        Top = 302
         Width = 811
         Height = 89
         Align = alBottom
@@ -937,7 +937,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 22
         Width = 811
-        Height = 216
+        Height = 277
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -966,7 +966,7 @@ object FormMain: TFormMain
       ImageIndex = 36
       object Splitter2: TSplitter
         Left = 0
-        Top = 238
+        Top = 299
         Width = 811
         Height = 3
         Cursor = crVSplit
@@ -1065,7 +1065,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 22
         Width = 811
-        Height = 216
+        Height = 277
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1090,7 +1090,7 @@ object FormMain: TFormMain
       end
       object mmoOutPas: TMemo
         Left = 0
-        Top = 241
+        Top = 302
         Width = 811
         Height = 89
         Align = alBottom
@@ -1111,7 +1111,7 @@ object FormMain: TFormMain
       ImageIndex = 37
       object Splitter3: TSplitter
         Left = 0
-        Top = 238
+        Top = 299
         Width = 811
         Height = 3
         Cursor = crVSplit
@@ -1207,7 +1207,7 @@ object FormMain: TFormMain
       end
       object mmoOutBas: TMemo
         Left = 0
-        Top = 241
+        Top = 302
         Width = 811
         Height = 89
         Align = alBottom
@@ -1226,7 +1226,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 22
         Width = 811
-        Height = 216
+        Height = 277
         Align = alClient
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -1257,7 +1257,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 811
-        Height = 330
+        Height = 391
         ActivePage = tsCalcExpress
         Align = alClient
         TabOrder = 0
@@ -1266,7 +1266,7 @@ object FormMain: TFormMain
           object Splitter4: TSplitter
             Left = 213
             Top = 0
-            Height = 299
+            Height = 360
             ExplicitLeft = 320
             ExplicitTop = -3
             ExplicitHeight = 446
@@ -1275,13 +1275,13 @@ object FormMain: TFormMain
             Left = 216
             Top = 0
             Width = 587
-            Height = 299
+            Height = 360
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
             object Bevel1: TBevel
               Left = 0
-              Top = 272
+              Top = 333
               Width = 587
               Height = 3
               Align = alBottom
@@ -1291,7 +1291,7 @@ object FormMain: TFormMain
             end
             object cbbCalcExpress: TComboBox
               Left = 0
-              Top = 275
+              Top = 336
               Width = 587
               Height = 24
               Align = alBottom
@@ -1308,7 +1308,7 @@ object FormMain: TFormMain
               Left = 0
               Top = 0
               Width = 587
-              Height = 272
+              Height = 333
               Align = alClient
               ReadOnly = True
               ScrollBars = ssVertical
@@ -1319,7 +1319,7 @@ object FormMain: TFormMain
             Left = 0
             Top = 0
             Width = 213
-            Height = 299
+            Height = 360
             Align = alLeft
             BevelOuter = bvNone
             TabOrder = 1
@@ -1336,7 +1336,7 @@ object FormMain: TFormMain
               Left = 0
               Top = 16
               Width = 213
-              Height = 283
+              Height = 344
               Align = alClient
               Lines.Strings = (
                 'x=10'
@@ -2087,7 +2087,7 @@ object FormMain: TFormMain
         Left = 217
         Top = 0
         Width = 594
-        Height = 330
+        Height = 391
         Align = alClient
         BevelInner = bvNone
         BevelOuter = bvNone
@@ -2107,7 +2107,7 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 217
-        Height = 330
+        Height = 391
         Align = alLeft
         BevelInner = bvRaised
         BevelOuter = bvLowered
@@ -2147,7 +2147,7 @@ object FormMain: TFormMain
           Top = 10
           Width = 198
           Height = 22
-          Caption = 'Little Interpretor'
+          Caption = 'Little Interpreter'
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
           Font.Height = -19
@@ -26997,10 +26997,6 @@ object FormMain: TFormMain
   object CD: TColorDialog
     Left = 320
     Top = 248
-  end
-  object SynJScriptSyn: TSynJScriptSyn
-    Left = 416
-    Top = 376
   end
   object dlgFont: TFontDialog
     Font.Charset = DEFAULT_CHARSET
