@@ -1061,6 +1061,7 @@ begin
   reReadme.Lines.LoadFromStream(rs);
 
   Version.Caption := VER;
+  Caption:='Little Interpreters '+VER;
 
   btnLittleC_newClick(Sender);
   btnLittleC_clearClick(Sender);
