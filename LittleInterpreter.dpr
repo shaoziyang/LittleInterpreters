@@ -5,15 +5,15 @@ program LittleInterpreter;
 uses
   Forms,
   UnitMain in 'UnitMain.pas' {FormMain},
-  UnitLittleDemos in 'UnitLittleDemos.pas' {FormLittleC_Demo},
-  UnitBasMan in 'UnitBasMan.pas' {FormBasicManual};
+  UnitBasMan in 'UnitBasMan.pas' {FormBasicManual},
+  UnitCodeSnippet in 'UnitCodeSnippet.pas' {FormCodeSnippet};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TFormMain, FormMain);
-  Application.CreateForm(TFormLittleC_Demo, FormLittleC_Demo);
   Application.CreateForm(TFormBasicManual, FormBasicManual);
+  Application.CreateForm(TFormCodeSnippet, FormCodeSnippet);
   Application.Run;
 end.
