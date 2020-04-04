@@ -33,7 +33,6 @@ uses
   Chip,
   Calculator,
   FastList,
-  Graph,
   AppEvnts,
   Grids;
 
@@ -62,7 +61,6 @@ type
     btnLittleC_run: TToolButton;
     btnLittleC_stop: TToolButton;
     ToolButton10: TToolButton;
-    btnLittleC_demos: TToolButton;
     synEditC: TSynEdit;
     XPManifest1: TXPManifest;
     tsAbout: TTabSheet;
@@ -87,7 +85,7 @@ type
     btnPas_run: TToolButton;
     btnPas_stop: TToolButton;
     ToolButton13: TToolButton;
-    btnPas_demos: TToolButton;
+    btnPas_CodeSnippet: TToolButton;
     SynEditPas: TSynEdit;
     Splitter2: TSplitter;
     mmoOutPas: TMemo;
@@ -132,72 +130,6 @@ type
     mmoCalcRes: TMemo;
     Bevel1: TBevel;
     Splitter4: TSplitter;
-    Panel110: TPanel;
-    Splitter: TSplitter;
-    gFormula: TStringGrid;
-    cbFormula: TComboBox;
-    tbQuality: TTrackBar;
-    LBox: TScrollBox;
-    LPanel: TPanel;
-    eHSpacing: TEdit;
-    eVSpacing: TEdit;
-    eTransparency: TEdit;
-    udTransparency: TUpDown;
-    cbLayout: TComboBox;
-    eMargin: TEdit;
-    udMargin: TUpDown;
-    eMinZoom: TEdit;
-    eMaxZoom: TEdit;
-    eZoomInFactor: TEdit;
-    eZoomOutFactor: TEdit;
-    eCenterX: TEdit;
-    eCenterY: TEdit;
-    eMaxX: TEdit;
-    eMaxY: TEdit;
-    pcCalcGraph: TPageControl;
-    tsGraph: TTabSheet;
-    tsReport: TTabSheet;
-    ilCalcGraph: TImageList;
-    CD: TColorDialog;
-    ToolBarCalcGraph: TToolBar;
-    btnCalcGraphGrid: TToolButton;
-    btnCalcGraphAxis: TToolButton;
-    btnCalcGraphTracing: TToolButton;
-    btnCalcGraphLineAntialias: TToolButton;
-    btnCalcGraphOverlaps: TToolButton;
-    btnCalcGraphExtreme: TToolButton;
-    btnCalcGraphLineMulticolor: TToolButton;
-    btnCalcGraphAutoquality: TToolButton;
-    btnCalcGraphCopyImage: TToolButton;
-    btnCalcGraphColor: TToolButton;
-    btnCalcGraphSign: TToolButton;
-    btnCalcGraphRectCoord: TToolButton;
-    btnCalcGraphPolarCoord: TToolButton;
-    btnCalcGraphDrawFormula: TSpeedButton;
-    btnCalcGraphClear: TSpeedButton;
-    label100: TLabel;
-    grpGraphLine: TGroupBox;
-    lable101: TLabel;
-    label102: TLabel;
-    grpZoom: TGroupBox;
-    lable103: TLabel;
-    label104: TLabel;
-    label105: TLabel;
-    label106: TLabel;
-    grpCoordSize: TGroupBox;
-    label107: TLabel;
-    label108: TLabel;
-    grpCoordCenter: TGroupBox;
-    label109: TLabel;
-    label110: TLabel;
-    grpSign: TGroupBox;
-    label111: TLabel;
-    label112: TLabel;
-    label113: TLabel;
-    toolbutton100: TToolButton;
-    toolbutton101: TToolButton;
-    Panel100: TPanel;
-    Panel101: TPanel;
     pnlCalcVar: TPanel;
     Label2: TLabel;
     mmoCalcVar: TMemo;
@@ -207,6 +139,11 @@ type
     pnlFont: TPanel;
     btnOptFont: TBitBtn;
     btnOptDefaultFont: TBitBtn;
+    btnBas_CodeSnippet: TToolButton;
+    btnBas_CodeSnippetAdd: TToolButton;
+    btnLittleC_CodeSnippet: TToolButton;
+    btnPas_CodeSnippetAdd: TToolButton;
+    btnLittleC_CodeSnippetAdd: TToolButton;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -218,7 +155,6 @@ type
     procedure btnLittleC_saveClick(Sender: TObject);
     procedure btnLittleC_saveasClick(Sender: TObject);
     procedure btnLittleC_openClick(Sender: TObject);
-    procedure btnLittleC_demosClick(Sender: TObject);
     procedure btnPas_clearClick(Sender: TObject);
     procedure btnPas_newClick(Sender: TObject);
     procedure mmoOutPasChange(Sender: TObject);
@@ -250,17 +186,18 @@ type
     procedure btnBas_HelpClick(Sender: TObject);
     procedure cbbCalcExpressDblClick(Sender: TObject);
     procedure cbbCalcExpressKeyPress(Sender: TObject; var Key: Char);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure btnCalcGraphGridClick(Sender: TObject);
-    procedure btnCalcGraphAxisClick(Sender: TObject);
     procedure btnOptFontClick(Sender: TObject);
     procedure btnOptDefaultFontClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure btnBas_CodeSnippetClick(Sender: TObject);
+    procedure SynEditBasPaintTransient(Sender: TObject; Canvas: TCanvas;
+      TransientType: TTransientType);
+    procedure SynEditPasPaintTransient(Sender: TObject; Canvas: TCanvas;
+      TransientType: TTransientType);
+    procedure synEditCPaintTransient(Sender: TObject; Canvas: TCanvas;
+      TransientType: TTransientType);
   private
     { Private declarations }
-    FUpdateCount: Integer;
-    FTraceList: TFastList;
-    FGraph: TGraph;
 
     ini_writeable: Boolean;
     LittleC_EditorTempFileName: string;
@@ -292,7 +229,6 @@ type
     procedure mmoOutPasAdd(s: string);
     procedure mmoOutBasAdd(s: string);
     procedure showFont;
-    property Graph: TGraph read FGraph write FGraph;
   end;
 
 var
@@ -304,8 +240,9 @@ var
 
 implementation
 
-uses UnitLittleDemos,
-  UnitBasMan;
+uses
+  UnitBasMan,
+  UnitCodeSnippet;
 
 {$R *.dfm}
 
@@ -497,6 +434,12 @@ begin
   mmoOutBas.Clear;
 end;
 
+procedure TFormMain.btnBas_CodeSnippetClick(Sender: TObject);
+begin
+  FormCodeSnippet.tcMain.TabIndex := pcMain.ActivePageIndex;
+  FormCodeSnippet.Show;
+end;
+
 procedure TFormMain.btnBas_HelpClick(Sender: TObject);
 begin
   FormBasicManual.Show;
@@ -568,18 +511,6 @@ begin
   btnBas_stop.Enabled := False;
   btnBas_run.Enabled := True;
   bas.SetBreak
-end;
-
-procedure TFormMain.btnCalcGraphAxisClick(Sender: TObject);
-begin
-  FGraph.ShowAxis := btnCalcGraphAxis.Down;
-  FGraph.Invalidate;
-end;
-
-procedure TFormMain.btnCalcGraphGridClick(Sender: TObject);
-begin
-  FGraph.ShowGrid := btnCalcGraphGrid.Down;
-  FGraph.Invalidate;
 end;
 
 procedure TFormMain.btnGiteeClick(Sender: TObject);
@@ -708,6 +639,8 @@ end;
 procedure TFormMain.pcMainChange(Sender: TObject);
 begin
   TrayIcon.IconIndex := pcMain.ActivePage.ImageIndex;
+  if Visible and (pcMain.ActivePage = tsCalc) and (pcCalc.ActivePage = tsCalcExpress) then
+    cbbCalcExpress.SetFocus;
 end;
 
 procedure TFormMain.pmTrayExitClick(Sender: TObject);
@@ -746,6 +679,12 @@ begin
   btnBas_saveas.Enabled := True;
 end;
 
+procedure TFormMain.SynEditBasPaintTransient(Sender: TObject; Canvas: TCanvas;
+  TransientType: TTransientType);
+begin
+  btnBas_CodeSnippetAdd.Enabled := SynEditBas.SelAvail;
+end;
+
 procedure TFormMain.synEditCChange(Sender: TObject);
 begin
   LittleC_Compiled := False;
@@ -753,11 +692,23 @@ begin
   btnLittleC_saveas.Enabled := True;
 end;
 
+procedure TFormMain.synEditCPaintTransient(Sender: TObject; Canvas: TCanvas;
+  TransientType: TTransientType);
+begin
+  btnLittleC_CodeSnippetAdd.Enabled := SynEditC.SelAvail;
+end;
+
 procedure TFormMain.SynEditPasChange(Sender: TObject);
 begin
   Pas_Compiled := False;
   btnPas_save.Enabled := True;
   btnPas_saveas.Enabled := True;
+end;
+
+procedure TFormMain.SynEditPasPaintTransient(Sender: TObject; Canvas: TCanvas;
+  TransientType: TTransientType);
+begin
+  btnPas_CodeSnippetAdd.Enabled := SynEditPas.SelAvail;
 end;
 
 procedure TFormMain.TimerTimer(Sender: TObject);
@@ -774,14 +725,6 @@ procedure TFormMain.TrayIconClick(Sender: TObject);
 begin
   Show;
   Application.BringToFront;
-end;
-
-procedure TFormMain.btnLittleC_demosClick(Sender: TObject);
-begin
-  if FormLittleC_Demo.ShowModal = mrOk then
-  begin
-
-  end;
 end;
 
 procedure TFormMain.btnLittleC_newClick(Sender: TObject);
@@ -866,7 +809,7 @@ begin
   Font.Name := 'Courier New';
   Font.Size := 10;
   ini.WriteFont('Option', 'Font', Font);
-  dlgFont.Font:=Font;
+  dlgFont.Font := Font;
   showFont;
 end;
 
@@ -1036,11 +979,6 @@ begin
   TrayIcon.Visible := chkOptTrayIcon.Checked;
 end;
 
-procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  FGraph.ForceStop;
-end;
-
 procedure TFormMain.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CanClose := (not TrayIcon.Visible) or (pmTray.Tag = $E);
@@ -1052,7 +990,6 @@ procedure TFormMain.FormCreate(Sender: TObject);
 var
   i: Integer;
   rs: TResourceStream;
-  Compatibility: longword;
 begin
   tsCalcGraph.TabVisible := False;
 
@@ -1061,7 +998,7 @@ begin
   reReadme.Lines.LoadFromStream(rs);
 
   Version.Caption := VER;
-  Caption:='Little Interpreters '+VER;
+  Caption := 'Little Interpreters ' + VER;
 
   btnLittleC_newClick(Sender);
   btnLittleC_clearClick(Sender);
@@ -1088,20 +1025,6 @@ begin
 
   Calc := TCalculator.Create(nil);
   mmoCalcVar.Modified := True;
-
-  try
-    FTraceList := TFastList.Create;
-    FTraceList.IndexTypes := [ttNameValue, ttName];
-    FGraph := TGraph.Create(Self);
-//  FGraph.OnMouseMove := MouseMove;
-//  FGraph.OnOffsetChange := OffsetChange;
-//  FGraph.OnTraceDone := TraceDone;
-//  FGraph.OnRectangularTrace := RectangularTrace;
-//  FGraph.OnPolarTrace := PolarTrace;
-    FGraph.Parent := tsGraph;
-    FGraph.Align := alClient;
-  except on E: Exception do
-  end;
 
   ini := TFastIniFile.Create(ChangeFileExt(Application.ExeName, '.ini'));
   try
@@ -1155,7 +1078,8 @@ begin
     pnlCalcVar.Width := ini.ReadInteger('CalcExpr', 'Width', mmoCalcRes.Width);
     ini.ReadStrings('CalcExpr', 'vars', mmoCalcVar.Lines);
     if mmoCalcVar.Text = '' then
-      mmoCalcVar.Text := 'x=10'#13#10'y=0x12#13#10f=x+y';
+      mmoCalcVar.Text := 'x=10'#13#10'y=0x12'#13#10'f=x+y';
+    mmoCalcVar.Modified := True;
   except
     ini_writeable := False;
   end;
@@ -1218,21 +1142,25 @@ begin
     bas.Free;
     ini.Free;
     Calc.Free;
-    FTraceList.Free;
-    FGraph.Free;
   end;
 end;
 
 procedure TFormMain.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  if Key=VK_F9 then
-  begin
-    case pcMain.ActivePageIndex of
-      0:btnLittleC_runClick(Sender);
-      1:btnPas_runClick(Sender);
-      2:btnBas_runClick(Sender);
-    end;
+  case Key of
+    VK_F9:
+      begin
+        case pcMain.ActivePageIndex of
+          0: btnLittleC_runClick(Sender);
+          1: btnPas_runClick(Sender);
+          2: btnBas_runClick(Sender);
+        end;
+      end;
+    VK_F10:
+      begin
+        btnBas_CodeSnippetClick(Sender);
+      end;
   end;
 end;
 
