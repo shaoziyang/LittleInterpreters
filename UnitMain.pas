@@ -196,6 +196,7 @@ type
       TransientType: TTransientType);
     procedure synEditCPaintTransient(Sender: TObject; Canvas: TCanvas;
       TransientType: TTransientType);
+    procedure mmoCalcResClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -526,6 +527,15 @@ end;
 procedure TFormMain.btnLittleC_clearClick(Sender: TObject);
 begin
   mmoOutC.Clear;
+end;
+
+procedure TFormMain.mmoCalcResClick(Sender: TObject);
+var
+  s: string;
+begin
+  s := mmoCalcRes.Lines[mmoCalcRes.CaretPos.Y];
+  if s <> '' then
+    cbbCalcExpress.Text := s;
 end;
 
 procedure TFormMain.mmoOutBasAdd(s: string);
@@ -934,12 +944,22 @@ begin
     try
       if mmoCalcVar.Modified then
       begin
-        mmoCalcVar.Modified := False;
         Calc.Clear;
         Calc.AddVariableList(mmoCalcVar.Lines);
+        mmoCalcVar.Clear;
+        for n := 0 to Calc.Count - 1 do
+        begin
+          mmoCalcVar.Lines.Add(Calc.ItemName[n] + ' = ' + Calc.ItemValueFromIndex[n]);
+          if Calc.ItemName[n] = 'x' then
+          begin
+            MessageDlg('If x is used as the variable name, ''0x'' cannot be used in the expression.',
+              mtWarning, [mbOK], 0);
+          end;
+        end;
+        mmoCalcVar.Modified := False;
       end;
       res := Calc.AsString(cbbCalcExpress.Text);
-      mmoCalcRes.Lines.Add(cbbCalcExpress.Text + ' =');
+      mmoCalcRes.Lines.Add(Trim(cbbCalcExpress.Text) + ' =');
       mmoCalcRes.Lines.Add(res);
       n := cbbCalcExpress.Items.IndexOf(cbbCalcExpress.Text);
       if n = -1 then
@@ -950,17 +970,17 @@ begin
       end
       else
         cbbCalcExpress.Items.Move(n, 0);
-      cbbCalcExpress.SelectAll;
+
     except
-      mmoCalcRes.Lines.Add('Expression <' + cbbCalcExpress.Text + '> Error!');
+      mmoCalcRes.Lines.Add('Expression < ' + Trim(cbbCalcExpress.Text) + ' > Error!');
+      cbbCalcExpress.SelectAll;
     end;
   finally
     mmoCalcRes.Lines.Add('');
-    if mmoCalcRes.Lines.Count > 4096 then
+    if mmoCalcRes.Lines.Count > 4095 then
     begin
-      mmoCalcRes.Lines.Delete(0);
-      mmoCalcRes.Lines.Delete(0);
-      mmoCalcRes.Lines.Delete(0);
+      for n := 1 to 128 * 3 do
+        mmoCalcRes.Lines.Delete(0);
     end;
   end;
 end;
@@ -1078,7 +1098,7 @@ begin
     pnlCalcVar.Width := ini.ReadInteger('CalcExpr', 'Width', mmoCalcRes.Width);
     ini.ReadStrings('CalcExpr', 'vars', mmoCalcVar.Lines);
     if mmoCalcVar.Text = '' then
-      mmoCalcVar.Text := 'x=10'#13#10'y=0x12'#13#10'f=x+y';
+      mmoCalcVar.Text := 'y=0x12'#13#10'f=y*y+2';
     mmoCalcVar.Modified := True;
   except
     ini_writeable := False;
@@ -1155,6 +1175,7 @@ begin
           0: btnLittleC_runClick(Sender);
           1: btnPas_runClick(Sender);
           2: btnBas_runClick(Sender);
+          3: cbbCalcExpressDblClick(Sender);
         end;
       end;
     VK_F10:
