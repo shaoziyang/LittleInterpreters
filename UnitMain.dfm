@@ -803,7 +803,7 @@ object FormMain: TFormMain
     Top = 0
     Width = 819
     Height = 422
-    ActivePage = tsCalc
+    ActivePage = tsPascal
     Align = alClient
     Images = ilMain
     TabOrder = 0
@@ -913,6 +913,7 @@ object FormMain: TFormMain
           Left = 171
           Top = 0
           Caption = 'btnLittleC_stop'
+          Enabled = False
           ImageIndex = 16
           OnClick = btnLittleC_stopClick
         end
@@ -1049,6 +1050,7 @@ object FormMain: TFormMain
         object btnPas_stop: TToolButton
           Left = 171
           Top = 0
+          Enabled = False
           ImageIndex = 16
           OnClick = btnPas_stopClick
         end
@@ -1200,6 +1202,7 @@ object FormMain: TFormMain
         object btnBas_stop: TToolButton
           Left = 171
           Top = 0
+          Enabled = False
           ImageIndex = 16
           OnClick = btnBas_stopClick
         end
@@ -1284,7 +1287,7 @@ object FormMain: TFormMain
         Top = 0
         Width = 811
         Height = 391
-        ActivePage = tsCalcGraph
+        ActivePage = tsCalcExpress
         Align = alClient
         TabOrder = 0
         object tsCalcExpress: TTabSheet
@@ -1339,6 +1342,9 @@ object FormMain: TFormMain
               ReadOnly = True
               ScrollBars = ssVertical
               TabOrder = 1
+              OnClick = mmoCalcResClick
+              ExplicitLeft = 3
+              ExplicitTop = -3
             end
           end
           object pnlCalcVar: TPanel
@@ -1727,6 +1733,17 @@ object FormMain: TFormMain
         end
       end
     end
+  end
+  object mmoOut_Temp: TMemo
+    Left = 648
+    Top = 248
+    Width = 25
+    Height = 25
+    TabStop = False
+    ReadOnly = True
+    TabOrder = 1
+    Visible = False
+    WordWrap = False
   end
   object SynCppSyn: TSynCppSyn
     Left = 416

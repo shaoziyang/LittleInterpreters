@@ -144,6 +144,7 @@ type
     btnLittleC_CodeSnippet: TToolButton;
     btnPas_CodeSnippetAdd: TToolButton;
     btnLittleC_CodeSnippetAdd: TToolButton;
+    mmoOut_Temp: TMemo;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
     procedure btnLittleC_newClick(Sender: TObject);
@@ -226,6 +227,8 @@ type
     procedure BasPrint(sender: TObject; msg: string);
   public
     { Public declarations }
+    function shortFileName(FileName: string): string;
+    procedure mmoOutAdd(var mmo: TMemo; msg: string);
     procedure mmoOutCAdd(s: string);
     procedure mmoOutPasAdd(s: string);
     procedure mmoOutBasAdd(s: string);
@@ -391,7 +394,8 @@ var
 begin
   if filename <> '' then
   begin
-    if pmBas_HisFile.Items.Find(filename) = nil then
+    mi := pmBas_HisFile.Items.Find(filename);
+    if mi = nil then
     begin
       if pmBas_HisFile.Items.Count > 8 then
         pmBas_HisFile.Items.Delete(7);
@@ -401,6 +405,14 @@ begin
       mi.OnClick := Bas_HisClick;
       mi.ImageIndex := tsBasic.ImageIndex;
       pmBas_HisFile.Items.Insert(0, mi);
+    end
+    else
+    begin
+      // move filename to first
+      if mi.MenuIndex = 0 then
+        Exit;
+      pmBas_HisFile.Items.Remove(mi);
+      Bas_addHis(FileName);
     end;
   end;
 end;
@@ -408,14 +420,15 @@ end;
 procedure TFormMain.Bas_HisClick(Sender: TObject);
 begin
   Bas_Load(TMenuItem(Sender).Caption);
-  dlgSaveBas.FileName := dlgOpenBas.FileName;
+  Bas_addHis(TMenuItem(Sender).Caption);
 end;
 
 procedure TFormMain.Bas_Load(filename: string);
 begin
   btnBas_newClick(nil);
   synEditBas.Lines.LoadFromFile(filename);
-  tsBasic.Caption := 'Basic - ' + FileName;
+  tsBasic.Caption := 'Basic - ' + shortFileName(FileName);
+  dlgSaveBas.FileName := filename;
 end;
 
 procedure TFormMain.Bas_Save(filename: string);
@@ -469,6 +482,8 @@ end;
 
 procedure TFormMain.btnBas_runClick(Sender: TObject);
 begin
+  if btnBas_stop.Enabled then
+    Exit;
   btnBas_stop.Enabled := True;
   btnBas_run.Enabled := False;
   try
@@ -491,7 +506,7 @@ begin
   if dlgSaveBas.Execute then
   begin
     Bas_Save(dlgSaveBas.FileName);
-    tsBasic.Caption := 'Basic - ' + dlgSaveBas.FileName;
+    tsBasic.Caption := 'Basic - ' + shortFileName(dlgSaveBas.FileName);
   end;
 end;
 
@@ -501,7 +516,7 @@ begin
   begin
     if not dlgSaveBas.Execute then
       Exit;
-    tsBasic.Caption := 'Basic - ' + dlgSaveBas.FileName;
+    tsBasic.Caption := 'Basic - ' + shortFileName(dlgSaveBas.FileName);
     Bas_addHis(dlgSaveBas.FileName);
   end;
   Bas_Save(dlgSaveBas.FileName);
@@ -534,20 +549,38 @@ var
   s: string;
 begin
   s := mmoCalcRes.Lines[mmoCalcRes.CaretPos.Y];
+  if s[Length(s)] = '=' then
+    System.Delete(s, Length(s), 1);
   if s <> '' then
     cbbCalcExpress.Text := s;
 end;
 
+procedure TFormMain.mmoOutAdd(var mmo: TMemo; msg: string);
+var
+  i, n: integer;
+begin
+  // add msg to last line end
+  // process \n
+  // reduce flash on update
+  mmoOut_Temp.Lines.BeginUpdate;
+  mmoOut_Temp.Lines.Text := msg;
+  mmoOut_Temp.Lines.EndUpdate;
+  n := mmo.Lines.Count;
+  if n > 0 then
+    n := n - 1;
+  mmo.Lines[n] := mmo.Lines[n] + mmoOut_Temp.Lines[0];
+  for i := 1 to mmoOut_Temp.Lines.Count - 1 do
+    mmo.Lines.Append(mmoOut_Temp.Lines[i]);
+  if mmo.Lines.Count > OUTPUT_MAX_LINES then
+  begin
+    for n := 1 to 256 do
+      mmo.Lines.Delete(0);
+  end;
+end;
+
 procedure TFormMain.mmoOutBasAdd(s: string);
 begin
-  mmoOutBas.Lines.BeginUpdate;
-  mmoOutBas.Lines.Text := mmoOutBas.Lines.Text + s;
-  mmoOutBas.Lines.EndUpdate;
-
-  // scroll to last line
-  mmoOutBas.SelStart := Length(mmoOutBas.Text);
-  mmoOutBas.SelLength := mmoOutBas.SelStart;
-
+  mmoOutAdd(mmoOutBas, s);
 end;
 
 procedure TFormMain.mmoOutBasChange(Sender: TObject);
@@ -563,11 +596,7 @@ end;
 
 procedure TFormMain.mmoOutCAdd(s: string);
 begin
-  mmoOutC.Lines.Text := mmoOutC.Lines.Text + s;
-
-  // scroll to last line
-  mmoOutC.SelStart := Length(mmoOutC.Text);
-  mmoOutC.SelLength := mmoOutC.SelStart;
+  mmoOutAdd(mmoOutC, s);
 end;
 
 procedure TFormMain.mmoOutCChange(Sender: TObject);
@@ -583,11 +612,7 @@ end;
 
 procedure TFormMain.mmoOutPasAdd(s: string);
 begin
-  mmoOutPas.Lines.Text := mmoOutPas.Lines.Text + s;
-
-  // scroll to last line
-  mmoOutPas.SelStart := Length(mmoOutPas.Text);
-  mmoOutPas.SelLength := mmoOutPas.SelStart;
+  mmoOutAdd(mmoOutPas, s);
 end;
 
 procedure TFormMain.mmoOutPasChange(Sender: TObject);
@@ -607,7 +632,8 @@ var
 begin
   if filename <> '' then
   begin
-    if pmPas_HisFile.Items.Find(filename) = nil then
+    mi := pmPas_HisFile.Items.Find(filename);
+    if mi = nil then
     begin
       if pmPas_HisFile.Items.Count > 8 then
         pmPas_HisFile.Items.Delete(7);
@@ -617,6 +643,15 @@ begin
       mi.OnClick := Pas_HisClick;
       mi.ImageIndex := tsPascal.ImageIndex;
       pmPas_HisFile.Items.Insert(0, mi);
+    end
+    else
+    begin
+      // move filename to first
+      if mi.MenuIndex = 0 then
+        Exit;
+      pmPas_HisFile.Items.Remove(mi);
+      Pas_addHis(FileName);
+
     end;
   end;
 end;
@@ -624,14 +659,15 @@ end;
 procedure TFormMain.Pas_HisClick(Sender: TObject);
 begin
   Pas_Load(TMenuItem(Sender).Caption);
-  dlgSavePas.FileName := dlgOpenPas.FileName;
+  Pas_addHis(TMenuItem(Sender).Caption);
 end;
 
 procedure TFormMain.Pas_Load(filename: string);
 begin
   btnPas_newClick(nil);
   synEditPas.Lines.LoadFromFile(filename);
-  tsPascal.Caption := 'Pascal - ' + FileName;
+  tsPascal.Caption := 'Pascal - ' + shortFileName(FileName);
+  dlgSavePas.FileName := filename;
 end;
 
 procedure TFormMain.Pas_Save(filename: string);
@@ -675,6 +711,13 @@ begin
   Sender.AddFunction(@PSclear, 'procedure clear;');
   Sender.AddFunction(@PSbeep, 'procedure beep(F, L:word);');
   Sender.AddFunction(@PSsleep, 'procedure sleep(x:integer);');
+end;
+
+function TFormMain.shortFileName(FileName: string): string;
+begin
+  Result := ExtractFileName(FileName);
+  if Length(Result) > 16 then
+    Result := copy(Result, 1, 13) + '...';
 end;
 
 procedure TFormMain.showFont;
@@ -746,6 +789,7 @@ begin
   btnLittleC_saveas.Enabled := False;
   tsLittleC.Caption := 'LittleC';
   dlgSaveLittleC.FileName := '';
+  LittleC_Compiled := False;
 end;
 
 procedure TFormMain.btnLittleC_openClick(Sender: TObject);
@@ -760,6 +804,8 @@ end;
 
 procedure TFormMain.btnLittleC_runClick(Sender: TObject);
 begin
+  if btnLittleC_stop.Enabled then
+    Exit;
   btnLittleC_run.Enabled := False;
   btnLittleC_stop.Enabled := True;
   try
@@ -791,7 +837,7 @@ begin
   if dlgSaveLittleC.Execute then
   begin
     LittleC_Save(dlgSaveLittleC.FileName);
-    tsLittleC.Caption := 'Little C - ' + dlgSaveLittleC.FileName;
+    tsLittleC.Caption := 'Little C - ' + shortFileName(dlgSaveLittleC.FileName);
   end;
 end;
 
@@ -801,7 +847,7 @@ begin
   begin
     if not dlgSaveLittleC.Execute then
       Exit;
-    tsLittleC.Caption := 'Little C - ' + dlgSaveLittleC.FileName;
+    tsLittleC.Caption := 'Little C - ' + shortFileName(dlgSaveLittleC.FileName);
     LittleC_addHis(dlgSaveLittleC.FileName);
   end;
   LittleC_Save(dlgSaveLittleC.FileName);
@@ -848,6 +894,7 @@ begin
   btnPas_saveas.Enabled := False;
   tsPascal.Caption := 'Pascal';
   dlgSavePas.FileName := '';
+  Pas_Compiled := False;
 end;
 
 procedure TFormMain.btnPas_openClick(Sender: TObject);
@@ -856,7 +903,6 @@ begin
   begin
     Pas_Load(dlgOpenPas.FileName);
     Pas_addHis(dlgOpenPas.FileName);
-    dlgSavePas.FileName := dlgOpenPas.FileName;
   end;
 end;
 
@@ -865,6 +911,8 @@ var
   res: boolean;
   i: integer;
 begin
+  if btnPas_stop.Enabled then
+    Exit;
   btnPas_stop.Enabled := True;
   btnPas_run.Enabled := False;
   try
@@ -912,7 +960,7 @@ begin
   if dlgSavePas.Execute then
   begin
     Pas_Save(dlgSavePas.FileName);
-    tsPascal.Caption := 'Pascal - ' + dlgSavePas.FileName;
+    tsPascal.Caption := 'Pascal - ' + shortFileName(dlgSavePas.FileName);
   end;
 end;
 
@@ -922,7 +970,7 @@ begin
   begin
     if not dlgSavePas.Execute then
       Exit;
-    tsPascal.Caption := 'Pascal - ' + dlgSavePas.FileName;
+    tsPascal.Caption := 'Pascal - ' + shortFileName(dlgSavePas.FileName);
     Pas_addHis(dlgSavePas.FileName);
   end;
   Pas_Save(dlgSavePas.FileName);
@@ -1188,14 +1236,15 @@ end;
 procedure TFormMain.LittleC_HisClick(Sender: TObject);
 begin
   LittleC_Load(TMenuItem(Sender).Caption);
-  dlgSaveLittleC.FileName := dlgOpenLittleC.FileName;
+  LittleC_addHis(TMenuItem(Sender).Caption);
 end;
 
 procedure TFormMain.LittleC_Load(filename: string);
 begin
   btnLittleC_newClick(nil);
   synEditC.Lines.LoadFromFile(filename);
-  tsLittleC.Caption := 'Little C - ' + FileName;
+  tsLittleC.Caption := 'Little C - ' + shortFileName(FileName);
+  dlgSaveLittleC.FileName := filename;
 end;
 
 procedure TFormMain.LittleC_Save(filename: string);
@@ -1216,7 +1265,8 @@ var
 begin
   if filename <> '' then
   begin
-    if pmLittleC_HisFile.Items.Find(filename) = nil then
+    mi := pmLittleC_HisFile.Items.Find(filename);
+    if mi = nil then
     begin
       if pmLittleC_HisFile.Items.Count > 8 then
         pmLittleC_HisFile.Items.Delete(7);
@@ -1226,6 +1276,15 @@ begin
       mi.OnClick := LittleC_HisClick;
       mi.ImageIndex := tsLittleC.ImageIndex;
       pmLittleC_HisFile.Items.Insert(0, mi);
+
+    end
+    else
+    begin
+      // move filename to first
+      if mi.MenuIndex = 0 then
+        Exit;
+      pmLittleC_HisFile.Items.Remove(mi);
+      LittleC_addHis(FileName);
 
     end;
   end;
