@@ -803,7 +803,7 @@ object FormMain: TFormMain
     Top = 0
     Width = 819
     Height = 422
-    ActivePage = tsPascal
+    ActivePage = tsCalc
     Align = alClient
     Images = ilMain
     TabOrder = 0
@@ -932,13 +932,6 @@ object FormMain: TFormMain
           ImageIndex = 34
           OnClick = btnBas_CodeSnippetClick
         end
-        object btnLittleC_CodeSnippetAdd: TToolButton
-          Left = 225
-          Top = 0
-          Caption = 'btnLittleC_CodeSnippetAdd'
-          Enabled = False
-          ImageIndex = 51
-        end
       end
       object synEditC: TSynEdit
         Left = 0
@@ -966,7 +959,6 @@ object FormMain: TFormMain
           'C')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = synEditCChange
-        OnPaintTransient = synEditCPaintTransient
       end
     end
     object tsPascal: TTabSheet
@@ -1068,12 +1060,6 @@ object FormMain: TFormMain
           ImageIndex = 34
           OnClick = btnBas_CodeSnippetClick
         end
-        object btnPas_CodeSnippetAdd: TToolButton
-          Left = 225
-          Top = 0
-          Enabled = False
-          ImageIndex = 51
-        end
       end
       object SynEditPas: TSynEdit
         Left = 0
@@ -1101,7 +1087,6 @@ object FormMain: TFormMain
           'Pascal')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = SynEditPasChange
-        OnPaintTransient = SynEditPasPaintTransient
       end
       object mmoOutPas: TMemo
         Left = 0
@@ -1226,12 +1211,6 @@ object FormMain: TFormMain
           ImageIndex = 34
           OnClick = btnBas_CodeSnippetClick
         end
-        object btnBas_CodeSnippetAdd: TToolButton
-          Left = 248
-          Top = 0
-          Enabled = False
-          ImageIndex = 51
-        end
       end
       object mmoOutBas: TMemo
         Left = 0
@@ -1276,7 +1255,6 @@ object FormMain: TFormMain
           'Basic')
         Options = [eoAutoIndent, eoDragDropEditing, eoEnhanceEndKey, eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
         OnChange = SynEditBasChange
-        OnPaintTransient = SynEditBasPaintTransient
       end
     end
     object tsCalc: TTabSheet
@@ -1343,8 +1321,6 @@ object FormMain: TFormMain
               ScrollBars = ssVertical
               TabOrder = 1
               OnClick = mmoCalcResClick
-              ExplicitLeft = 3
-              ExplicitTop = -3
             end
           end
           object pnlCalcVar: TPanel

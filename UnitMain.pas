@@ -140,10 +140,7 @@ type
     btnOptFont: TBitBtn;
     btnOptDefaultFont: TBitBtn;
     btnBas_CodeSnippet: TToolButton;
-    btnBas_CodeSnippetAdd: TToolButton;
     btnLittleC_CodeSnippet: TToolButton;
-    btnPas_CodeSnippetAdd: TToolButton;
-    btnLittleC_CodeSnippetAdd: TToolButton;
     mmoOut_Temp: TMemo;
     procedure btnLittleC_clearClick(Sender: TObject);
     procedure mmoOutCChange(Sender: TObject);
@@ -191,12 +188,6 @@ type
     procedure btnOptDefaultFontClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnBas_CodeSnippetClick(Sender: TObject);
-    procedure SynEditBasPaintTransient(Sender: TObject; Canvas: TCanvas;
-      TransientType: TTransientType);
-    procedure SynEditPasPaintTransient(Sender: TObject; Canvas: TCanvas;
-      TransientType: TTransientType);
-    procedure synEditCPaintTransient(Sender: TObject; Canvas: TCanvas;
-      TransientType: TTransientType);
     procedure mmoCalcResClick(Sender: TObject);
   private
     { Private declarations }
@@ -362,11 +353,29 @@ begin
   Application.ProcessMessages;
 end;
 
+function RTL_POWER(x, y: single): single; pascal;
+begin
+  Result := power(x, y);
+end;
+
+function RTL_LOG(x: single): single; pascal;
+begin
+  Result := ln(x) * 0.43429448190325182765;
+end;
+
+procedure RTL_MSG(s: POINTER); pascal;
+begin
+  ShowMessage(PChar(s));
+end;
+
 procedure OnOwnNativesPointers(Script: TBeRoScript);
 begin
   Script.AddNativeProc('clear', @RTL_CLEAR);
   Script.AddNativeProc('sleep', @RTL_SLEEP);
   Script.AddNativeProc('beep', @RTL_BEEP);
+  Script.AddNativeProc('power', @RTL_POWER);
+  Script.AddNativeProc('log', @RTL_LOG);
+  Script.AddNativeProc('msg', @RTL_MSG);
 end;
 
 procedure OnOwnNativesDefinitions(Script: TBeRoScript);
@@ -374,6 +383,9 @@ begin
   Script.AddString('native void clear();');
   Script.AddString('native void sleep(int number);');
   Script.AddString('native void beep(int F, int L);');
+  Script.AddString('native float power(float x, float y);');
+  Script.AddString('native float log(float x);');
+  Script.AddString('native void msg(string s);');
 end;
 {Little C script end}
 
@@ -732,12 +744,6 @@ begin
   btnBas_saveas.Enabled := True;
 end;
 
-procedure TFormMain.SynEditBasPaintTransient(Sender: TObject; Canvas: TCanvas;
-  TransientType: TTransientType);
-begin
-  btnBas_CodeSnippetAdd.Enabled := SynEditBas.SelAvail;
-end;
-
 procedure TFormMain.synEditCChange(Sender: TObject);
 begin
   LittleC_Compiled := False;
@@ -745,23 +751,11 @@ begin
   btnLittleC_saveas.Enabled := True;
 end;
 
-procedure TFormMain.synEditCPaintTransient(Sender: TObject; Canvas: TCanvas;
-  TransientType: TTransientType);
-begin
-  btnLittleC_CodeSnippetAdd.Enabled := SynEditC.SelAvail;
-end;
-
 procedure TFormMain.SynEditPasChange(Sender: TObject);
 begin
   Pas_Compiled := False;
   btnPas_save.Enabled := True;
   btnPas_saveas.Enabled := True;
-end;
-
-procedure TFormMain.SynEditPasPaintTransient(Sender: TObject; Canvas: TCanvas;
-  TransientType: TTransientType);
-begin
-  btnPas_CodeSnippetAdd.Enabled := SynEditPas.SelAvail;
 end;
 
 procedure TFormMain.TimerTimer(Sender: TObject);
@@ -1099,7 +1093,11 @@ begin
     ini.WriteInteger('Run', 'Count', ini.ReadInteger('Run', 'Count', 0) + 1);
     ini.UpdateFile;
     ini_writeable := True;
+  except
+    ini_writeable := False;
+  end;
 
+  try
     BoundsRect := ini.ReadRect('Last', 'pos', BoundsRect);
     pcMain.ActivePageIndex := ini.ReadInteger('Last', 'page', 0);
     pcMainChange(nil);
@@ -1149,7 +1147,7 @@ begin
       mmoCalcVar.Text := 'y=0x12'#13#10'f=y*y+2';
     mmoCalcVar.Modified := True;
   except
-    ini_writeable := False;
+
   end;
 
 end;
