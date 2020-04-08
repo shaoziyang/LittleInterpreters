@@ -215,6 +215,7 @@ type
     procedure Bas_addHis(filename: string);
     procedure Bas_HisClick(Sender: TObject);
 
+    procedure LittleCPrint(sender: TObject; msg: string);
     procedure BasPrint(sender: TObject; msg: string);
   public
     { Public declarations }
@@ -255,9 +256,9 @@ begin
   for i := low(v) to high(v) do
   begin
     ss := v[i];
-    s := s + ss + ' ';
+    s := s + ss;
   end;
-  FormMain.mmoOutPas.Lines.add(s);
+  FormMain.mmoOutPasAdd(s);
 end;
 
 function PSlog(x: extended): extended;
@@ -291,21 +292,18 @@ begin
   Result := Randomrange(x, y);
 end;
 
-procedure PSWriteln(const s: variant);
-begin
-  FormMain.mmoOutPas.Lines.Add(s);
-end;
-
 procedure PSWrite(const s: variant);
 var
-  n: integer;
   ss: string;
 begin
-  n := FormMain.mmoOutPas.Lines.Count;
-  if n > 0 then
-    n := n - 1;
   ss := s;
-  FormMain.mmoOutPas.Lines[n] := FormMain.mmoOutPas.Lines[n] + ss;
+  FormMain.mmoOutAdd(FormMain.mmoOutPas, ss);
+end;
+
+procedure PSWriteln(const s: variant);
+begin
+  PSWrite(s);
+  FormMain.mmoOutPas.Lines.Add('');
 end;
 
 function PSReadln(const question: string): string;
@@ -561,6 +559,8 @@ var
   s: string;
 begin
   s := mmoCalcRes.Lines[mmoCalcRes.CaretPos.Y];
+  if s = '' then
+    Exit;
   if s[Length(s)] = '=' then
     System.Delete(s, Length(s), 1);
   if s <> '' then
@@ -574,15 +574,21 @@ begin
   // add msg to last line end
   // process \n
   // reduce flash on update
+  if msg = '' then
+    Exit;
+
   mmoOut_Temp.Lines.BeginUpdate;
   mmoOut_Temp.Lines.Text := msg;
   mmoOut_Temp.Lines.EndUpdate;
   n := mmo.Lines.Count;
   if n > 0 then
-    n := n - 1;
+    if mmo.Text[Length(mmo.Text)]<>#10 then
+      n := n- 1;
   mmo.Lines[n] := mmo.Lines[n] + mmoOut_Temp.Lines[0];
-  for i := 1 to mmoOut_Temp.Lines.Count - 1 do
+  for i := 1 to mmoOut_Temp.Lines.Count-1  do
     mmo.Lines.Append(mmoOut_Temp.Lines[i]);
+  if (msg[Length(msg)] = #10) then
+    mmo.Lines.Add('');
   if mmo.Lines.Count > OUTPUT_MAX_LINES then
   begin
     for n := 1 to 256 do
@@ -812,9 +818,7 @@ begin
 
       Script.Run;
       if Script.Errors <> '' then
-        mmoOutC.Lines.Add(Script.Errors)
-      else
-        mmoOutCAdd(Script.Output + #13#10);
+        mmoOutC.Lines.Add(Script.Errors);
 
     except
 
@@ -984,6 +988,10 @@ var
 begin
   try
     try
+      cbbCalcExpress.Text := TRIM(cbbCalcExpress.Text);
+      if cbbCalcExpress.Text = '' then
+        Exit;
+
       if mmoCalcVar.Modified then
       begin
         Calc.Clear;
@@ -1007,8 +1015,8 @@ begin
       if n = -1 then
       begin
         cbbCalcExpress.Items.Insert(0, cbbCalcExpress.Text);
-        if cbbCalcExpress.Items.Count > 8 then
-          cbbCalcExpress.Items.Delete(8);
+        if cbbCalcExpress.Items.Count > 12 then
+          cbbCalcExpress.Items.Delete(12);
       end
       else
         cbbCalcExpress.Items.Move(n, 0);
@@ -1069,7 +1077,7 @@ begin
     Script := TBeRoScript.Create(GetTempDir);
     Script.OnOwnNativesPointers := OnOwnNativesPointers;
     Script.OnOwnNativesDefinitions := OnOwnNativesDefinitions;
-
+    Script.OnPrint := LittleCPrint;
   except
     ShowMessage('Create script error!');
     Halt(1);
@@ -1255,6 +1263,11 @@ begin
   except
 
   end;
+end;
+
+procedure TFormMain.LittleCPrint(sender: TObject; msg: string);
+begin
+  mmoOutCAdd(msg);
 end;
 
 procedure TFormMain.LittleC_addHis(filename: string);

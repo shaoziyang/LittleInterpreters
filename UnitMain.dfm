@@ -803,7 +803,7 @@ object FormMain: TFormMain
     Top = 0
     Width = 819
     Height = 422
-    ActivePage = tsCalc
+    ActivePage = tsLittleC
     Align = alClient
     Images = ilMain
     TabOrder = 0
@@ -964,6 +964,10 @@ object FormMain: TFormMain
     object tsPascal: TTabSheet
       Caption = 'Pascal'
       ImageIndex = 36
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter2: TSplitter
         Left = 0
         Top = 299
@@ -1109,6 +1113,10 @@ object FormMain: TFormMain
     object tsBasic: TTabSheet
       Caption = 'Basic'
       ImageIndex = 37
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Splitter3: TSplitter
         Left = 0
         Top = 299
@@ -1260,6 +1268,10 @@ object FormMain: TFormMain
     object tsCalc: TTabSheet
       Caption = 'Calc'
       ImageIndex = 38
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object pcCalc: TPageControl
         Left = 0
         Top = 0
@@ -1270,6 +1282,10 @@ object FormMain: TFormMain
         TabOrder = 0
         object tsCalcExpress: TTabSheet
           Caption = 'express'
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
           object Splitter4: TSplitter
             Left = 213
             Top = 0
@@ -1305,7 +1321,7 @@ object FormMain: TFormMain
               AutoComplete = False
               AutoDropDown = True
               AutoCloseUp = True
-              ItemHeight = 16
+              ItemHeight = 0
               TabOrder = 0
               Text = '1 + 2'
               OnDblClick = cbbCalcExpressDblClick
@@ -1358,12 +1374,20 @@ object FormMain: TFormMain
         object tsCalcGraph: TTabSheet
           Caption = 'Graph'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 0
+          ExplicitWidth = 0
+          ExplicitHeight = 0
         end
       end
     end
     object tsAbout: TTabSheet
       Caption = 'About'
       ImageIndex = 40
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object reReadme: TRichEdit
         Left = 217
         Top = 0
