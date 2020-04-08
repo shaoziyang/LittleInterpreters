@@ -366,16 +366,16 @@ begin
   ShowMessage(PChar(s));
 end;
 
-procedure RTL_SET_FloatToStrPrec(n:byte); pascal;
+procedure RTL_SET_FloatToStrPrec(n: byte); pascal;
 begin
   Script.SetFloatPrec(n);
 end;
 
-function RTL_FloatToStr(Number: single; n:byte=8):string;
-var fmt:string;
+function RTL_FloatToStr(Number: single; n: byte = 8): string;
+var fmt: string;
 begin
-  fmt:='%.'+IntToStr(n)+'g';
-  result:=Format(fmt,[Number]);
+  fmt := '%.' + IntToStr(n) + 'g';
+  result := Format(fmt, [Number]);
 end;
 
 procedure OnOwnNativesPointers(Script: TBeRoScript);
@@ -596,10 +596,10 @@ begin
   mmoOut_Temp.Lines.EndUpdate;
   n := mmo.Lines.Count;
   if n > 0 then
-    if mmo.Text[Length(mmo.Text)]<>#10 then
-      n := n- 1;
+    if mmo.Text[Length(mmo.Text)] <> #10 then
+      n := n - 1;
   mmo.Lines[n] := mmo.Lines[n] + mmoOut_Temp.Lines[0];
-  for i := 1 to mmoOut_Temp.Lines.Count-1  do
+  for i := 1 to mmoOut_Temp.Lines.Count - 1 do
     mmo.Lines.Append(mmoOut_Temp.Lines[i]);
   if (msg[Length(msg)] = #10) then
     mmo.Lines.Add('');
@@ -997,7 +997,7 @@ end;
 
 procedure TFormMain.cbbCalcExpressDblClick(Sender: TObject);
 var
-  n: Integer;
+  n, t: Integer;
   res: string;
 begin
   try
@@ -1033,7 +1033,12 @@ begin
           cbbCalcExpress.Items.Delete(12);
       end
       else
+      begin
+        t := cbbCalcExpress.SelStart;
         cbbCalcExpress.Items.Move(n, 0);
+        cbbCalcExpress.Text := cbbCalcExpress.Items[0];
+        cbbCalcExpress.SelStart := t;
+      end;
 
     except
       mmoCalcRes.Lines.Add('Expression < ' + Trim(cbbCalcExpress.Text) + ' > Error!');
@@ -1092,7 +1097,7 @@ begin
     Script.OnOwnNativesPointers := OnOwnNativesPointers;
     Script.OnOwnNativesDefinitions := OnOwnNativesDefinitions;
     Script.OnPrint := LittleCPrint;
-    Script.OnFloatToStr:= RTL_FloatToStr;
+    Script.OnFloatToStr := RTL_FloatToStr;
   except
     ShowMessage('Create script error!');
     Halt(1);
