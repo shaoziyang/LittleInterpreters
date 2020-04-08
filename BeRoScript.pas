@@ -792,8 +792,11 @@ TYPE PBYTE=^BYTE;
       Files:ARRAY OF STRING;
      END;
 
+     TBeRoScriptPrintEvent = procedure(Sender: TObject; msg: string) of object;
+
      TBeRoScript=CLASS
       PRIVATE
+       FPrint: TBeRoScriptPrintEvent;
        fOnOwnPreCode:TBeRoScriptStringEvent;
        fOnOwnNativesPointers:TBeRoScriptEvent;
        fOnOwnNativesDefinitions:TBeRoScriptEvent;
@@ -1191,6 +1194,8 @@ TYPE PBYTE=^BYTE;
        PROPERTY OnOwnPreCode:TBeRoScriptStringEvent READ fOnOwnPreCode WRITE fOnOwnPreCode;
        PROPERTY OnOwnNativesPointers:TBeRoScriptEvent READ fOnOwnNativesPointers WRITE fOnOwnNativesPointers;
        PROPERTY OnOwnNativesDefinitions:TBeRoScriptEvent READ fOnOwnNativesDefinitions WRITE fOnOwnNativesDefinitions;
+       procedure Print(s:string);
+       property OnPrint: TBeRoScriptPrintEvent write FPrint;
      END;
 
 VAR RandomSeed:LONGWORD;
@@ -3743,7 +3748,8 @@ BEGIN
   IF ASSIGNED(Zeiger) THEN BEGIN
    SETLENGTH(S,Laenge);
    MOVE(Zeiger^,S[1],Laenge);
-   TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+   TBeRoScript(Klasse).FPrint(nil, S);
+//   TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
    IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
   END;
  END;
@@ -3758,7 +3764,8 @@ BEGIN
    Laenge:=PBeroScriptString(LONGWORD(LONGWORD(Zeiger)-strStartOffset))^.Length;
    SETLENGTH(S,Laenge);
    MOVE(Zeiger^,S[1],Laenge);
-   TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+//   TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+   TBeRoScript(Klasse).FPrint(nil, S);
    IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
   END;
  END;
@@ -3769,7 +3776,8 @@ VAR S:STRING;
 BEGIN
  IF ASSIGNED(Klasse) THEN BEGIN
   STR(Number,S);
-  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+//  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+  TBeRoScript(Klasse).FPrint(nil, S);
   IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
  END;
 END;
@@ -3779,7 +3787,8 @@ VAR S:STRING;
 BEGIN
  IF ASSIGNED(Klasse) THEN BEGIN
   STR(Number,S);
-  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+//  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+  TBeRoScript(Klasse).FPrint(nil, S);
   IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
  END;
 END;
@@ -3790,7 +3799,8 @@ BEGIN
  IF ASSIGNED(Klasse) THEN BEGIN
   IF ASSIGNED(Zeiger) THEN BEGIN
    S:=Zeiger;
-   TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+//   TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+   TBeRoScript(Klasse).FPrint(nil, S);
    IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
   END;
  END;
@@ -3799,7 +3809,8 @@ END;
 PROCEDURE RTL_PRINTF_CHAR(Klasse:POINTER;Zeichen:LONGWORD); PASCAL;
 BEGIN
  IF ASSIGNED(Klasse) THEN BEGIN
-  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+CHR(Zeichen);
+//  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+CHR(Zeichen);
+  TBeRoScript(Klasse).FPrint(nil, CHR(Zeichen));
   IF TBeRoScript(Klasse).OutDirect THEN WRITE(CHR(Zeichen));
  END;
 END;
@@ -3809,7 +3820,8 @@ VAR S:STRING;
 BEGIN
  IF ASSIGNED(Klasse) THEN BEGIN
   STR(Number,S);
-  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+//  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
+  TBeRoScript(Klasse).FPrint(nil, S);
   IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
  END;
 END;
@@ -5698,8 +5710,10 @@ END;
 
 PROCEDURE TBeRoScript.OutWrtAXUnsigned;
 BEGIN
- UseWrtAXUnsigned:=TRUE;
- CallLabel('C_WRITENUMUNSIGNED');
+// UseWrtAXUnsigned:=TRUE;
+// CallLabel('C_WRITENUMUNSIGNED');
+ UseWrtAXSigned:=TRUE;
+ CallLabel('C_WRITENUMSIGNED');
  ByteHinzufuegen($31); ByteHinzufuegen($C0); // XOR EAX,EAX
  ByteHinzufuegen($31); ByteHinzufuegen($DB); // XOR EBX,EBX
 END;
@@ -14407,6 +14421,11 @@ BEGIN
  SETLENGTH(LinesInfo.PreparsedLines,0);
 END;
 
+procedure TBeRoScript.Print(s: string);
+begin
+  FPrint(self, S);
+end;
+
 PROCEDURE TBeRoScript.AddString(CONST S:STRING);
 BEGIN
  IF LENGTH(S)>0 THEN QuellStream.Write(S[1],LENGTH(S));
@@ -14421,7 +14440,7 @@ BEGIN
  AddNativeProc('RTL_PRINTF_NUMBER_UNSIGNED',@RTL_PRINTF_NUMBER_UNSIGNED);
  AddNativeProc('RTL_PRINTF_PCHAR',@RTL_PRINTF_PCHAR);
  AddNativeProc('RTL_PRINTF_CHAR',@RTL_PRINTF_CHAR);
- AddNativeProc('RTL_PRINTF_FLOAT',@RTL_PRINTF_FLOAT);
+// AddNativeProc('RTL_PRINTF_FLOAT',@RTL_PRINTF_FLOAT);
  AddNativeProc('RTL_STRING_NEW',@RTL_STRING_NEW);
  AddNativeProc('RTL_STRING_INCREASE',@RTL_STRING_INCREASE);
  AddNativeProc('RTL_STRING_DECREASE',@RTL_STRING_DECREASE);
