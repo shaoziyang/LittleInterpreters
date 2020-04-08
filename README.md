@@ -1,5 +1,5 @@
 # Readme
-**Little Interpreter** is a small software, it can be used for scientific computing, algorithm research, and programming learning. It includes several useful functions and interpreters:
+**Little Interpreter** is a small win32 software, it can be used for scientific computing, algorithm research, and programming learning. It includes several useful functions and interpreters:
 
 - Little C Interpreter
 - Pascal Script
@@ -21,4 +21,5 @@ Little Interpreter is develop with Turbo Delphi, and use several opensource  com
 - FastIniFiles http://home.hccnet.nl/p.zylstra/
 - Parse components (express calculate) https://torry.net/pages.php?id=304
   
-  
+**Download**:  
+- [Win32 binary](releases)
