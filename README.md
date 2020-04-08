@@ -22,4 +22,6 @@ Little Interpreter is develop with Turbo Delphi, and use several opensource  com
 - Parse components (express calculate) https://torry.net/pages.php?id=304
   
 **Download**:  
-- [Win32 binary](releases)
+- [github](https://github.com/shaoziyang/LittleInterpreters/releases) or  
+- [gitee](https://gitee.com/shaoziyang/LittleInterpreters/releases)
+  
