@@ -792,10 +792,13 @@ TYPE PBYTE=^BYTE;
       Files:ARRAY OF STRING;
      END;
 
+     TBeRoScriptFloatToStrEvent = function(x: single; n:byte):string;
      TBeRoScriptPrintEvent = procedure(Sender: TObject; msg: string) of object;
 
      TBeRoScript=CLASS
       PRIVATE
+       FFloatToStrPrec:byte;
+       FFloatToStr: TBeRoScriptFloatToStrEvent;
        FPrint: TBeRoScriptPrintEvent;
        fOnOwnPreCode:TBeRoScriptStringEvent;
        fOnOwnNativesPointers:TBeRoScriptEvent;
@@ -1195,7 +1198,9 @@ TYPE PBYTE=^BYTE;
        PROPERTY OnOwnNativesPointers:TBeRoScriptEvent READ fOnOwnNativesPointers WRITE fOnOwnNativesPointers;
        PROPERTY OnOwnNativesDefinitions:TBeRoScriptEvent READ fOnOwnNativesDefinitions WRITE fOnOwnNativesDefinitions;
        procedure Print(s:string);
+       procedure SetFloatPrec(prec:Byte=8);
        property OnPrint: TBeRoScriptPrintEvent write FPrint;
+       property OnFloatToStr: TBeRoScriptFloatToStrEvent read FFloatToStr write FFloatToStr;
      END;
 
 VAR RandomSeed:LONGWORD;
@@ -3819,7 +3824,8 @@ PROCEDURE RTL_PRINTF_FLOAT(Klasse:POINTER;Number:SINGLE); PASCAL;
 VAR S:STRING;
 BEGIN
  IF ASSIGNED(Klasse) THEN BEGIN
-  STR(Number,S);
+   S:=TBeRoScript(Klasse).FFloatToStr(Number, TBeRoScript(Klasse).FFloatToSTrPrec);
+//  STR(Number,S);
 //  TBeRoScript(Klasse).Output:=TBeRoScript(Klasse).Output+S;
   TBeRoScript(Klasse).FPrint(nil, S);
   IF TBeRoScript(Klasse).OutDirect THEN WRITE(S);
@@ -4960,6 +4966,11 @@ BEGIN
  Errors:=Errors+' Error: '+S+#13#10;
  ferror:=TRUE;
 END;
+
+procedure TBeRoScript.SetFloatPrec(prec: Byte=8);
+begin
+ FFloatToStrPrec:=prec;
+end;
 
 PROCEDURE TBeRoScript.ByteHinzufuegen(B:BYTE);
 BEGIN
@@ -13698,6 +13709,7 @@ END;
 
 PROCEDURE TBeRoScript.Init;
 BEGIN
+ FFloatToStrPrec:=8;
  IsCompiled:=FALSE;
  UseOutputBlock:=FALSE;
  UseWrtSTR:=FALSE;
@@ -14440,7 +14452,7 @@ BEGIN
  AddNativeProc('RTL_PRINTF_NUMBER_UNSIGNED',@RTL_PRINTF_NUMBER_UNSIGNED);
  AddNativeProc('RTL_PRINTF_PCHAR',@RTL_PRINTF_PCHAR);
  AddNativeProc('RTL_PRINTF_CHAR',@RTL_PRINTF_CHAR);
-// AddNativeProc('RTL_PRINTF_FLOAT',@RTL_PRINTF_FLOAT);
+ AddNativeProc('RTL_PRINTF_FLOAT',@RTL_PRINTF_FLOAT);
  AddNativeProc('RTL_STRING_NEW',@RTL_STRING_NEW);
  AddNativeProc('RTL_STRING_INCREASE',@RTL_STRING_INCREASE);
  AddNativeProc('RTL_STRING_DECREASE',@RTL_STRING_DECREASE);

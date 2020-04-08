@@ -366,6 +366,18 @@ begin
   ShowMessage(PChar(s));
 end;
 
+procedure RTL_SET_FloatToStrPrec(n:byte); pascal;
+begin
+  Script.SetFloatPrec(n);
+end;
+
+function RTL_FloatToStr(Number: single; n:byte=8):string;
+var fmt:string;
+begin
+  fmt:='%.'+IntToStr(n)+'g';
+  result:=Format(fmt,[Number]);
+end;
+
 procedure OnOwnNativesPointers(Script: TBeRoScript);
 begin
   Script.AddNativeProc('clear', @RTL_CLEAR);
@@ -374,6 +386,7 @@ begin
   Script.AddNativeProc('power', @RTL_POWER);
   Script.AddNativeProc('log', @RTL_LOG);
   Script.AddNativeProc('msg', @RTL_MSG);
+  Script.AddNativeProc('setfloatprec', @RTL_SET_FloatToStrPrec);
 end;
 
 procedure OnOwnNativesDefinitions(Script: TBeRoScript);
@@ -384,6 +397,7 @@ begin
   Script.AddString('native float power(float x, float y);');
   Script.AddString('native float log(float x);');
   Script.AddString('native void msg(string s);');
+  Script.AddString('native void setfloatprec(int n);');
 end;
 {Little C script end}
 
@@ -1078,6 +1092,7 @@ begin
     Script.OnOwnNativesPointers := OnOwnNativesPointers;
     Script.OnOwnNativesDefinitions := OnOwnNativesDefinitions;
     Script.OnPrint := LittleCPrint;
+    Script.OnFloatToStr:= RTL_FloatToStr;
   except
     ShowMessage('Create script error!');
     Halt(1);
